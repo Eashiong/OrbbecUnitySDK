@@ -31,7 +31,7 @@ public class ColorImageView : MonoBehaviour
         }
         if(colorTexture.width != obColorFrame.width || colorTexture.height != obColorFrame.height)
         {
-            colorTexture.Resize(obColorFrame.width, obColorFrame.height);
+            colorTexture.Reinitialize(obColorFrame.width, obColorFrame.height);
         }
         colorTexture.LoadRawTextureData(obColorFrame.data);
         colorTexture.Apply();

@@ -42,27 +42,75 @@ namespace OrbbecUnity
 
         private VideoStreamProfile FindProfile(OrbbecProfile obProfile)
         {
+            if (obProfile.sensorType != sensor.GetSensorType())
+            {
+                return null;
+            }
+
+            StreamProfileList profileList = null;
             try
             {
-                var profileList = sensor.GetStreamProfileList();
-                VideoStreamProfile streamProfile = profileList.GetVideoStreamProfile(obProfile.width, obProfile.height, obProfile.format, obProfile.fps);
-                if (streamProfile != null && obProfile.sensorType == sensor.GetSensorType())
+                profileList = sensor.GetStreamProfileList();
+                if (profileList.ProfileCount() == 0)
                 {
-                    Debug.LogFormat("Profile found: {0}x{1}@{2} {3}",
-                            streamProfile.GetWidth(),
-                            streamProfile.GetHeight(),
-                            streamProfile.GetFPS(),
-                            streamProfile.GetFormat());
-                    return streamProfile;
+                    return null;
                 }
-                else
+
+                var format = obProfile.GetNormalizedFormat();
+                uint count = profileList.ProfileCount();
+                for (int i = 0; i < count; i++)
                 {
-                    Debug.LogWarning("Profile not found");
+                    StreamProfile streamProfile = null;
+                    VideoStreamProfile videoProfile = null;
+                    try
+                    {
+                        streamProfile = profileList.GetProfile(i);
+                        videoProfile = streamProfile.As<VideoStreamProfile>();
+                        if (videoProfile == null)
+                        {
+                            continue;
+                        }
+
+                        if (obProfile.width > 0 && videoProfile.GetWidth() != obProfile.width)
+                        {
+                            continue;
+                        }
+                        if (obProfile.height > 0 && videoProfile.GetHeight() != obProfile.height)
+                        {
+                            continue;
+                        }
+                        if (obProfile.fps > 0 && videoProfile.GetFPS() != obProfile.fps)
+                        {
+                            continue;
+                        }
+                        if (format != Format.OB_FORMAT_ANY && videoProfile.GetFormat() != format)
+                        {
+                            continue;
+                        }
+
+                        Debug.LogFormat("Profile found: {0}x{1}@{2} {3}",
+                            videoProfile.GetWidth(),
+                            videoProfile.GetHeight(),
+                            videoProfile.GetFPS(),
+                            videoProfile.GetFormat());
+                        streamProfile = null;
+                        return videoProfile;
+                    }
+                    finally
+                    {
+                        streamProfile?.Dispose();
+                    }
                 }
+
+                Debug.LogWarning("Profile not found");
             }
             catch (NativeException e)
             {
                 Debug.Log(e.Message);
+            }
+            finally
+            {
+                profileList?.Dispose();
             }
 
             return null;
@@ -92,7 +140,7 @@ namespace OrbbecUnity
                 return;
             }
 
-            for (int i = 0; i < orbbecProfiles.Length - 1; i++)
+            for (int i = 0; i < orbbecProfiles.Length; i++)
             {
                 streamProfile = FindProfile(orbbecProfiles[i]);
                 if (streamProfile != null)

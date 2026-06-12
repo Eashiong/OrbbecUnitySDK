@@ -26,11 +26,8 @@ namespace Orbbec
         public UInt32 DeviceCount()
         {
             IntPtr error = IntPtr.Zero;
-            UInt32 count = obNative.ob_device_list_count(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            UInt32 count = obNative.ob_device_list_get_count(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
             return count;
         }
 
@@ -51,10 +48,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr ptr = obNative.ob_device_list_get_device_name(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(ptr);
         }
 
@@ -75,10 +69,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             int pid = obNative.ob_device_list_get_device_pid(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return pid;
         }
 
@@ -99,10 +90,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             int vid = obNative.ob_device_list_get_device_vid(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return vid;
         }
 
@@ -123,10 +111,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr ptr = obNative.ob_device_list_get_device_uid(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(ptr);
         }
 
@@ -147,10 +132,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_device_list_get_device_serial_number(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(handle);
         }
 
@@ -158,10 +140,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_device_list_get_device_connection_type(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(handle);
         }
 
@@ -169,21 +148,38 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_device_list_get_device_ip_address(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
+            return Marshal.PtrToStringAnsi(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Get device local mac address
+        * 
+        * @attention Only valid for network devices, otherwise it will return "0:0:0:0:0:0".
+        *
+        * @param index Device index
+        * @return const char* returns the device mac address
+        * \else
+        * @brief 获取指定设备的本地mac地址
+        *
+        * @param index 设备索引
+        * @return String 返回设备的序列号
+        * \endif
+        */
+        public string LocalMac(UInt32 index)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_device_list_get_device_local_mac(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(handle);
         }
 
         public String ExtensionInfo(UInt32 index)
         {
             IntPtr error = IntPtr.Zero;
-            IntPtr handle = obNative.ob_device_list_get_extension_info(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            IntPtr handle = obNative.ob_device_info_get_extension_info(_handle.Ptr, index, ref error);
+            NativeException.HandleError(error);
             return Marshal.PtrToStringAnsi(handle);
         }
 
@@ -204,10 +200,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_device_list_get_device(_handle.Ptr, index, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new Device(handle);
         }
 
@@ -228,10 +221,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_device_list_get_device_by_serial_number(_handle.Ptr, serialNumber, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new Device(handle);
         }
 
@@ -252,10 +242,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_device_list_get_device_by_uid(_handle.Ptr, uid, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new Device(handle);
         }
 
@@ -263,10 +250,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_device_list(handle, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         public void Dispose()

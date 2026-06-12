@@ -16,4 +16,4 @@ MonoBehaviour:
   width: 1024
   height: 0
   fps: 0
-  format: 255
+  format: -1

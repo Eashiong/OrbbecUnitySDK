@@ -12,7 +12,7 @@ namespace Orbbec
         private Device _device;
         private static Dictionary<IntPtr, FramesetCallback> _framesetCallbacks = new Dictionary<IntPtr, FramesetCallback>();
         private NativeFramesetCallback _nativeCallback;
-        
+
 #if ORBBEC_UNITY
         [AOT.MonoPInvokeCallback(typeof(NativeFramesetCallback))]
 #endif
@@ -45,10 +45,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_create_pipeline(ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
             _nativeCallback = new NativeFramesetCallback(OnFrameset);
         }
@@ -67,35 +64,7 @@ namespace Orbbec
             _device = device;
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_create_pipeline_with_device(device.GetNativeHandle().Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-            _handle = new NativeHandle(handle, Delete);
-            _nativeCallback = new NativeFramesetCallback(OnFrameset);
-        }
-
-        /**
-        * \if English
-        * @brief Use the playback file to create a pipeline object
-        *
-        * @param fileName The playback file path used to create the pipeline
-        * @return Pipeline returns the pipeline object
-        * \else
-        * @brief 使用回放文件来创建pipeline对象
-        *
-        * @param fileName 用于创建pipeline的回放文件路径
-        * @return Pipeline 返回pipeline对象
-        * \endif
-        */
-        public Pipeline(string fileName)
-        {
-            IntPtr error = IntPtr.Zero;
-            IntPtr handle = obNative.ob_create_pipeline_with_playback_file(fileName, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
             _nativeCallback = new NativeFramesetCallback(OnFrameset);
         }
@@ -115,10 +84,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_pipeline_start_with_config(_handle.Ptr, config == null ? IntPtr.Zero : config.GetNativeHandle().Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -139,10 +105,7 @@ namespace Orbbec
             _framesetCallbacks[_handle.Ptr] = callback;
             IntPtr error = IntPtr.Zero;
             obNative.ob_pipeline_start_with_callback(_handle.Ptr, config == null ? IntPtr.Zero : config.GetNativeHandle().Ptr, _nativeCallback, _handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -156,10 +119,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_pipeline_stop(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -177,10 +137,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_pipeline_get_config(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new Config(handle);
         }
 
@@ -201,15 +158,8 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_pipeline_wait_for_frameset(_handle.Ptr, timeoutMs, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-            if(handle == IntPtr.Zero)
-            {
-                return null;
-            }
-            return new Frameset(handle);
+            NativeException.HandleError(error);
+            return handle != IntPtr.Zero ? new Frameset(handle) : null;
         }
 
         /**
@@ -231,33 +181,8 @@ namespace Orbbec
             }
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_pipeline_get_device(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new Device(handle);
-        }
-
-        /**
-        * \if English
-        * @brief Get playback object
-        *
-        * @return std::shared_ptr<Playback> returns the playback object
-        * \else
-        * @brief 获取回放对象
-        *
-        * @return std::shared_ptr<Playback> 返回回放对象
-        * \endif
-        */
-        public Playback GetPlayback()
-        {
-            IntPtr error = IntPtr.Zero;
-            IntPtr handle = obNative.ob_pipeline_get_playback(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-            return new Playback(handle);
         }
 
         /**
@@ -278,11 +203,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_pipeline_get_stream_profile_list(_handle.Ptr, sensorType, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-            
+            NativeException.HandleError(error);
             return new StreamProfileList(handle);
         }
 
@@ -298,10 +219,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_pipeline_enable_frame_sync(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -315,10 +233,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_pipeline_disable_frame_sync(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -339,10 +254,7 @@ namespace Orbbec
             IntPtr error = IntPtr.Zero;
             CameraParam cameraParam;
             obNative.ob_pipeline_get_camera_param(out cameraParam, _handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return cameraParam;
         }
 
@@ -351,10 +263,7 @@ namespace Orbbec
             IntPtr error = IntPtr.Zero;
             CameraParam cameraParam;
             obNative.ob_pipeline_get_camera_param_with_profile(out cameraParam, _handle.Ptr, colorWidth, colorHeight, depthWidth, depthHeight, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return cameraParam;
         }
 
@@ -377,39 +286,8 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr ptr = obNative.ob_get_d2c_depth_profile_list(_handle.Ptr, colorProfile.GetNativeHandle().Ptr, alignMode, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new StreamProfileList(ptr);
-        }
-
-        /**
-        * \if English
-        * @brief Get valid area between minimum distance and maximum distance after D2C
-        *
-        * @param minimumDistance minimum working distance
-        * @param maximumDistance maximum working distance
-        * @return Rect returns the area information valid after D2C at the working distance
-        * \else
-        * @brief 获取D2C后给定工作范围的有效区域
-        * 如果需要获取指定距离D2C后的ROI区域，将minimum_distance与maximum_distance设置成一样或者将maximum_distance设置成0
-        *
-        * @param minimumDistance 最小工作距离
-        * @param maximumDistance 最大工作距离
-        * @return Rect 返回在工作距离下D2C后有效的区域信息
-        * \endif
-        */
-        public Rect GetD2CValidArea(UInt32 minimumDistance, UInt32 maximumDistance = 0)
-        {
-            IntPtr error = IntPtr.Zero;
-            Rect rect;
-            obNative.ob_get_d2c_range_valid_area(out rect, _handle.Ptr, minimumDistance, maximumDistance, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-            return rect;
         }
 
         /**
@@ -427,58 +305,14 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_pipeline_switch_config(_handle.Ptr, config.GetNativeHandle().Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-        }
-
-        /**
-        * \if English
-        * @brief start recording
-        *
-        * @param filename Record file name
-        * \else
-        * @brief 开始录制
-        *
-        * @param filename 录制文件名
-        * \endif
-        */
-        public void StartRecord(String fileName)
-        {
-            IntPtr error = IntPtr.Zero;
-            obNative.ob_pipeline_start_record(_handle.Ptr, fileName, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-        }
-
-        /**
-        * \if English
-        * @brief Stop recording
-        * \else
-        * @brief 停止录制
-        * \endif
-        */
-        public void StopRecord()
-        {
-            IntPtr error = IntPtr.Zero;
-            obNative.ob_pipeline_stop_record(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         internal void Delete(IntPtr handle)
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_pipeline(handle, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         public void Dispose()

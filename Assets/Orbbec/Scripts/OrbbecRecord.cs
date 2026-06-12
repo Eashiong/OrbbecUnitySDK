@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Orbbec;
+using UnityEngine;
 
 namespace OrbbecUnity
 {
@@ -9,20 +7,35 @@ namespace OrbbecUnity
     {
         public OrbbecPipeline pipeline;
 
+        private RecordDevice recordDevice;
+
         public void StartRecord(string recordPath)
         {
-            if(pipeline.HasInit)
+            if (!pipeline.HasInit)
             {
-                pipeline.Pipeline.StartRecord(recordPath);
+                return;
             }
+
+            var device = pipeline.Pipeline.GetDevice();
+            recordDevice = new RecordDevice(device, recordPath);
+            recordDevice.Resume();
         }
 
         public void StopRecord()
         {
-            if(pipeline.HasInit)
+            if (recordDevice == null)
             {
-                pipeline.Pipeline.StopRecord();
+                return;
             }
+
+            recordDevice.Pause();
+            recordDevice.Dispose();
+            recordDevice = null;
+        }
+
+        void OnDestroy()
+        {
+            StopRecord();
         }
     }
 }

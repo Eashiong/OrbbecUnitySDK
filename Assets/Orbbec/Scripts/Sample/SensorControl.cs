@@ -38,11 +38,7 @@ public class SensorControl : MonoBehaviour {
 		devices = new List<Device>();
 		propertyIds = new List<PropertyId>();
 
-		context = OrbbecContext.Instance.Context;
-		if(OrbbecContext.Instance.HasInit)
-		{
-			StartCoroutine(WaitForDevice());
-		}
+		StartCoroutine(StartWhenReady());
 	}
 
 	void OnDestroy()
@@ -53,12 +49,19 @@ public class SensorControl : MonoBehaviour {
 		}
 	}
 
+	private IEnumerator StartWhenReady()
+	{
+		yield return OrbbecContext.Instance.WaitUntilInitialized();
+		context = OrbbecContext.Instance.Context;
+		yield return WaitForDevice();
+	}
+
 	private IEnumerator WaitForDevice()
 	{
 		while (true)
 		{
 			yield return new WaitForEndOfFrame();
-			context.EnableNetDeviceEnumeration(true);
+			OrbbecContext.TryEnableNetDeviceEnumeration(context, true);
 			DeviceList deviceList = context.QueryDeviceList();
 			if (deviceList.DeviceCount() > 0)
 			{

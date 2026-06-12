@@ -12,10 +12,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_create_config(ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
         }
 
@@ -41,13 +38,162 @@ namespace Orbbec
         * \endif
         */
         public void EnableStream(StreamProfile streamProfile)
+        //public void EnableStream(StreamType streamType)
         {
             IntPtr error = IntPtr.Zero;
-            obNative.ob_config_enable_stream(_handle.Ptr, streamProfile.GetNativeHandle().Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            obNative.ob_config_enable_stream_with_stream_profile(_handle.Ptr, streamProfile.GetNativeHandle().Ptr, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Enable a stream with default profile
+        *
+        * @param streamType The type of the stream to be enabled
+        * \else
+        * @brief 启用默认配置文件的流
+        *
+        * @param sensorType 要启用的流的类型
+        * \endif
+        */
+        public void EnableStream(StreamType streamType)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_config_enable_stream(_handle.Ptr, streamType, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Enable a stream with default profile
+        *
+        * @param sensorType The type of the sensor to be enabled
+        * \else
+        * @brief 启用默认配置文件的流
+        *
+        * @param sensorType 要启用的流的类型
+        * \endif
+        */
+        public void EnableStream(SensorType sensorType)
+        {
+            IntPtr error = IntPtr.Zero;
+            StreamType streamType = TypeHelper.ConvertSensorTypeToStreamType(sensorType);
+            obNative.ob_config_enable_stream(_handle.Ptr, streamType, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Enable video stream with specified parameters
+        *
+        * @param config The pipeline configuration object
+        * @param streamType The type of the stream to be enabled
+        * @param width The width of the video stream
+        * @param height The height of the video stream
+        * @param fps The frame rate of the video stream
+        * @param format The format of the video stream
+        * \else
+        * @brief 使用指定参数启用视频流
+        *
+        * @param config pipe配置对象
+        * @param streamType 要启用的流的类型
+        * @param width 视频流的宽度
+        * @param height 视频流的高度
+        * @param fps 视频流的帧率
+        * @param format 视频流的格式
+        * \endif
+        */
+        public void EnableVideoStream(StreamType streamType, int width = 0, int height = 0,
+            int fps = 0, Format format = Format.OB_FORMAT_ANY)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_config_enable_video_stream(_handle.Ptr, streamType, width, height, fps, format, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Enable video stream with specified parameters
+        *
+        * @param config The pipeline configuration object
+        * @param sensorType The type of the sensor to be enabled
+        * @param width The width of the video stream
+        * @param height The height of the video stream
+        * @param fps The frame rate of the video stream
+        * @param format The format of the video stream
+        * \else
+        * @brief 使用指定参数启用视频流
+        *
+        * @param config pipe配置对象
+        * @param sensorType 要启用的传感器类型
+        * @param width 视频流的宽度
+        * @param height 视频流的高度
+        * @param fps 视频流的帧率
+        * @param format 视频流的格式
+        * \endif
+        */
+        public void EnableVideoStream(SensorType sensorType, int width, int height, int fps, Format format)
+        {
+            IntPtr error = IntPtr.Zero;
+            StreamType streamType = TypeHelper.ConvertSensorTypeToStreamType(sensorType);
+            obNative.ob_config_enable_video_stream(_handle.Ptr, streamType, width, height, fps, format, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+         * \if English
+         * @brief Enable an accelerometer stream to be used in the pipeline.
+         *
+         * This function allows users to enable an accelerometer stream with customizable parameters.
+         * If no parameters are specified, the stream will be enabled with default settings.
+         * Users who wish to set custom full-scale ranges or sample rates should refer to the product manual, as available settings vary by device model.
+         *
+         * @param fullScaleRange The full-scale range of the accelerometer (default is OB_ACCEL_FULL_SCALE_RANGE_ANY, which selects the default range).
+         * @param sampleRate The sample rate of the accelerometer (default is OB_ACCEL_SAMPLE_RATE_ANY, which selects the default rate).
+         * \else
+         * @brief 启用pipeline中使用的加速计流
+         * 
+         * 此功能允许用户启用具有可自定义参数的加速计流
+         * 如果未指定参数，则将使用默认设置启用流
+         * 希望设置自定义满标度范围或采样率的用户应参考产品手册，因为可用设置因设备型号而异
+         * 
+         * @param fullScaleRange 加速计的满标度范围（默认为OB_ACCEL_full_scale_range_ANY，用于选择默认范围）
+         * @param sampleRate 加速计的采样率（默认值为OB_ACCEL_AMPLE_rate_ANY，用于选择默认速率）
+         */
+        public void EnableAccelStream(AccelFullScaleRange fullScaleRange = AccelFullScaleRange.OB_ACCEL_FULL_SCALE_RANGE_ANY,
+            AccelSampleRate sampleRate = AccelSampleRate.OB_ACCEL_SAMPLE_RATE_ANY)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_config_enable_accel_stream(_handle.Ptr, fullScaleRange, sampleRate, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+         * \if English
+         * @brief Enable an gyroscope stream to be used in the pipeline.
+         *
+         * This function allows users to enable an gyroscope stream with customizable parameters.
+         * If no parameters are specified, the stream will be enabled with default settings.
+         * Users who wish to set custom full-scale ranges or sample rates should refer to the product manual, as available settings vary by device model.
+         *
+         * @param fullScaleRange The full-scale range of the accelerometer (default is OB_GYRO_FULL_SCALE_RANGE_ANY, which selects the default range).
+         * @param sampleRate The sample rate of the accelerometer (default is OB_GYRO_SAMPLE_RATE_ANY, which selects the default rate).
+         * \else
+         * @brief 启用pipeline中使用的陀螺仪流
+         * 
+         * 此功能允许用户启用具有可自定义参数的陀螺仪流
+         * 如果未指定参数，则将使用默认设置启用流
+         * 希望设置自定义满标度范围或采样率的用户应参考产品手册，因为可用设置因设备型号而异
+         * 
+         * @param fullScaleRange 加速计的满标度范围（默认为OB_GYRO_FULL_SCALE_RANGE_ANY，用于选择默认范围）
+         * @param sampleRate 加速计的采样率（默认值为OB_GYRO_SAMPLE_RATE_ANY，用于选择默认速率）
+         */
+        public void EnableGyroStream(GyroFullScaleRange fullScaleRange = GyroFullScaleRange.OB_GYRO_FULL_SCALE_RANGE_ANY,
+            GyroSampleRate sampleRate = GyroSampleRate.OB_GYRO_SAMPLE_RATE_ANY)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_config_enable_gyro_stream(_handle.Ptr, fullScaleRange, sampleRate, ref error);
+            NativeException.HandleError(error);
         }
 
         /**
@@ -61,10 +207,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_config_enable_all_stream(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -82,10 +225,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_config_disable_stream(_handle.Ptr, streamType, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -99,10 +239,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_config_disable_all_stream(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -120,10 +257,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_config_set_align_mode(_handle.Ptr, mode, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -140,11 +274,8 @@ namespace Orbbec
         public void SetDepthScaleRequire(bool enable)
         {
             IntPtr error = IntPtr.Zero;
-            obNative.ob_config_set_depth_scale_require(_handle.Ptr, enable, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            obNative.ob_config_set_depth_scale_after_align_require(_handle.Ptr, enable, ref error);
+            NativeException.HandleError(error);
         }
 
         /**
@@ -166,20 +297,35 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_config_set_d2c_target_resolution(_handle.Ptr, d2cTargetWidth, d2cTargetHeight, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Set the frame aggregation output mode for the pipeline configuration
+        * @brief The processing strategy when the FrameSet generated by the frame aggregation function does not contain the frames of all opened streams (which
+        * can be caused by different frame rates of each stream, or by the loss of frames of one stream): drop directly or output to the user.
+        *
+        * @param mode The frame aggregation output mode to be set (default mode is @ref OB_FRAME_AGGREGATE_OUTPUT_ANY_SITUATION)
+        * \else
+        * @brief 将pipeline配置设置为帧聚合输出模式
+        * @brief 当帧聚合功能生成的FrameSet不包含所有打开流的帧时的处理策略（这可能是由于每个流的帧速率不同，或者一个流的帧丢失造成的）：直接丢弃或输出给用户。
+        * 
+        * @param mode要设置的帧聚合输出模式（默认模式为@ref OB_FRAME_AGGREGATE_OUTPUT_ANY_SITUATION）
+        * \endif
+        */
+        public void SetFrameAggregateOutputMode(FrameAggregateOutputMode mode)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_config_set_frame_aggregate_output_mode(_handle.Ptr, mode, ref error);
+            NativeException.HandleError(error);
         }
 
         internal void Delete(IntPtr handle)
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_config(handle, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         public void Dispose()

@@ -12,5 +12,15 @@ namespace OrbbecUnity
         public int height;
         public int fps;
         public Format format;
+
+        public Format GetNormalizedFormat()
+        {
+            int formatValue = (int)format;
+            if (formatValue < 0 || formatValue == 255 || !System.Enum.IsDefined(typeof(Format), format))
+            {
+                return Format.OB_FORMAT_ANY;
+            }
+            return format;
+        }
     }
 }

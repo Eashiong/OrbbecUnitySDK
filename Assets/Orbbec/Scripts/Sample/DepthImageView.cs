@@ -32,7 +32,7 @@ public class DepthImageView : MonoBehaviour
         }
         if (depthTexture.width != obDepthFrame.width || depthTexture.height != obDepthFrame.height)
         {
-            depthTexture.Resize(obDepthFrame.width, obDepthFrame.height);
+            depthTexture.Reinitialize(obDepthFrame.width, obDepthFrame.height);
         }
 
         int colorDataLength = (obDepthFrame.data.Length / 2) * 3;

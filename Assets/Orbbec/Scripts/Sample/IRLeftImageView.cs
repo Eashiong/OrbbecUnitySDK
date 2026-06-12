@@ -31,7 +31,7 @@ public class IRLeftImageView : MonoBehaviour
         }
         if(irTexture.width != obIrFrame.width || irTexture.height != obIrFrame.height)
         {
-            irTexture.Resize(obIrFrame.width, obIrFrame.height);
+            irTexture.Reinitialize(obIrFrame.width, obIrFrame.height);
         }
         int colorDataLength = obIrFrame.format == Format.OB_FORMAT_Y8 ? obIrFrame.data.Length * 3 : (obIrFrame.data.Length / 2) * 3;
         if (colorData == null || colorData.Length != colorDataLength)

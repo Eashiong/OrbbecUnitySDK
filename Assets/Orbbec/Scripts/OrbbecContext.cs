@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using Orbbec;
 using UnityEngine;
 
@@ -57,11 +58,22 @@ namespace OrbbecUnity
 
         void OnDestroy()
         {
-            if(hasInit)
+            if(hasInit && context != null)
             {
                 context.Dispose();
             }
+#if !UNITY_EDITOR && UNITY_ANDROID
+            AndroidDeviceManager.Close();
+#endif
             hasInit = false;
+        }
+
+        public IEnumerator WaitUntilInitialized()
+        {
+            while (!hasInit)
+            {
+                yield return null;
+            }
         }
 
         private void InitSDK()
@@ -70,11 +82,57 @@ namespace OrbbecUnity
                                         Version.GetMajorVersion(),
                                         Version.GetMinorVersion(),
                                         Version.GetPatchVersion());
-            context = new Context();
 #if !UNITY_EDITOR && UNITY_ANDROID
-            AndroidDeviceManager.Init();
+            AndroidDeviceManager.Init(CompleteInit);
+#else
+            CompleteInit();
 #endif
+        }
+
+        private void CompleteInit()
+        {
+            if (hasInit)
+            {
+                return;
+            }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+            SetupWindowsNativePaths();
+#endif
+            context = new Context();
             hasInit = true;
+        }
+
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+        private static void SetupWindowsNativePaths()
+        {
+            var pluginDir = Path.Combine(Application.dataPath, "Orbbec", "Plugins", "x86_64");
+            var extensionsDir = Path.Combine(pluginDir, "extensions");
+            if (Directory.Exists(extensionsDir))
+            {
+                Context.SetExtensionsDirectory(extensionsDir);
+            }
+            else
+            {
+                Debug.LogWarning($"Orbbec extensions directory not found: {extensionsDir}");
+            }
+        }
+#endif
+
+        public static void TryEnableNetDeviceEnumeration(Context ctx, bool enable)
+        {
+#if !UNITY_EDITOR && UNITY_ANDROID
+            try
+            {
+                ctx.EnableNetDeviceEnumeration(enable);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"EnableNetDeviceEnumeration skipped on Android: {e.Message}");
+            }
+#else
+            ctx.EnableNetDeviceEnumeration(enable);
+#endif
         }
     }
 }

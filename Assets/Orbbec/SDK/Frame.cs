@@ -72,11 +72,8 @@ namespace Orbbec
         public UInt64 GetIndex()
         {
             IntPtr error = IntPtr.Zero;
-            UInt64 index = obNative.ob_frame_index(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            UInt64 index = obNative.ob_frame_get_index(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
             return index;
         }
 
@@ -94,11 +91,8 @@ namespace Orbbec
         public Format GetFormat()
         {
             IntPtr error = IntPtr.Zero;
-            Format format = obNative.ob_frame_format(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            Format format = obNative.ob_frame_get_format(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
             return format;
         }
 
@@ -117,10 +111,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             FrameType frameType = obNative.ob_frame_get_type(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return frameType;
         }
 
@@ -139,10 +130,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             UInt64 timestamp = obNative.ob_frame_time_stamp(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return timestamp;
         }
 
@@ -160,11 +148,8 @@ namespace Orbbec
         public UInt64 GetTimeStampUs()
         {
             IntPtr error = IntPtr.Zero;
-            UInt64 timestamp = obNative.ob_frame_time_stamp_us(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            UInt64 timestamp = obNative.ob_frame_get_timestamp_us(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
             return timestamp;
         }
 
@@ -183,10 +168,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             UInt64 sysTimestamp = obNative.ob_frame_system_time_stamp(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return sysTimestamp;
         }
 
@@ -197,11 +179,8 @@ namespace Orbbec
         public void CopyData(ref Byte[] data)
         {
             IntPtr error = IntPtr.Zero;
-            IntPtr dataPtr = obNative.ob_frame_data(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            IntPtr dataPtr = obNative.ob_frame_get_data(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
             Marshal.Copy(dataPtr, data, 0, data.Length);
         }
 
@@ -212,12 +191,9 @@ namespace Orbbec
         public IntPtr GetDataPtr()
         {
             IntPtr error = IntPtr.Zero;
-            IntPtr dataPtr = obNative.ob_frame_data(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
-            return dataPtr; 
+            IntPtr dataPtr = obNative.ob_frame_get_data(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return dataPtr;
         }
 
         /**
@@ -236,22 +212,173 @@ namespace Orbbec
         public UInt32 GetDataSize()
         {
             IntPtr error = IntPtr.Zero;
-            UInt32 dataSize = obNative.ob_frame_data_size(_handle.Ptr, ref error);
-            if(error != IntPtr.Zero)
+            UInt32 dataSize = obNative.ob_frame_get_data_size(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return dataSize;
+        }
+
+        public static Frame Create(FrameType frameType, Format format, UInt32 dataSize)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_frame(frameType, format, dataSize, ref error);
+            NativeException.HandleError(error);
+            return new Frame(handle);
+        }
+
+        public T CreateFrameFromOtherFrame<T>(bool shouldCopyData) where T : Frame
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_frame_from_other_frame(_handle.Ptr, shouldCopyData, ref error);
+            NativeException.HandleError(error);
+            return new Frame(handle) as T;
+        }
+
+        public static Frame CreateFrameFromStreamProfile(StreamProfile streamProfile)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_frame_from_stream_profile(streamProfile.GetNativeHandle().Ptr, ref error);
+            NativeException.HandleError(error);
+            return new Frame(handle);
+        }
+
+/*        public Frame CreateFrameFromBuffer(FrameType frameType, Format format, IntPtr buffer, UInt32 bufferSize, FrameDestroyCallback callback, IntPtr userData)
+        {
+            IntPtr error = IntPtr.Zero;
+            NativeFrameDestroyCallback _nativeCallback = new NativeFrameDestroyCallback((buffer, userData) => {
+                callback();
+            });
+            IntPtr handle = obNative.ob_create_frame_from_buffer(frameType, format, buffer, bufferSize, _nativeCallback, userData, ref error);
+            if (error != IntPtr.Zero)
             {
                 throw new NativeException(new Error(error));
             }
-            return dataSize;
+            return new Frame(handle);
+        }*/
+
+        public void CopyInfo(Frame dstFrame)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_frame_copy_info(_handle.Ptr, dstFrame.GetNativeHandle().Ptr, ref error);
+            NativeException.HandleError(error);
+        }
+
+        public void UpdateData(IntPtr data, UInt32 dataSize)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_frame_update_data(_handle.Ptr, data, dataSize, ref error);
+            NativeException.HandleError(error);
+        }
+
+        public void UpdateMetaData(IntPtr metadata, UInt32 metaDataSize)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_frame_update_metadata(_handle.Ptr, metadata, metaDataSize, ref error);
+            NativeException.HandleError(error);
+        }
+
+        public void SetStreamProfile(StreamProfile streamProfile)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_frame_set_stream_profile(_handle.Ptr, streamProfile.GetNativeHandle().Ptr, ref error);
+            NativeException.HandleError(error);
+        }
+
+        public StreamProfile GetStreamProfile()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_frame_get_stream_profile(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return new StreamProfile(handle);
+        }
+
+        /**
+        * \if English
+        * @brief Get the metadata of the frame
+        *
+        * @return Byte[] returns the metadata of the frame
+        * \else
+        * @brief 获取帧的元数据
+        *
+        * @return Byte[] 返回帧的元数据
+        * \endif
+        */
+        public Byte[] GetMetadata()
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr data = obNative.ob_frame_get_metadata(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            UInt32 dataSize = GetMetadataSize();
+            Byte[] buffer = new Byte[dataSize];
+            Marshal.Copy(data, buffer, 0, (int)dataSize);
+            return buffer;
+        }
+
+        /**
+        * \if English
+        * @brief Get the metadata size of the frame
+        *
+        * @return UInt32 returns the metadata size of the frame
+        * \else
+        * @brief 获取帧的元数据大小
+        *
+        * @return UInt32 返回帧的元数据大小
+        * \endif
+        */
+        public UInt32 GetMetadataSize()
+        {
+            IntPtr error = IntPtr.Zero;
+            UInt32 size = obNative.ob_frame_get_metadata_size(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return size;
+        }
+
+        /**
+        * \if English
+        * @brief Check if the frame object has metadata of a given type
+        *
+        * @param type The metadata type. refer to @ref FrameMetadataType
+        * @return bool The result
+        * \else
+        * @brief 检查帧对象是否具有给定类型的元数据
+        *
+        * @param type 元数据类型。请参考@ref FrameMetadataType
+        * @return bool 结果
+        * \endif
+        */
+        public bool HasMetadata(FrameMetadataType type)
+        {
+            IntPtr error = IntPtr.Zero;
+            bool result = obNative.ob_frame_has_metadata(_handle.Ptr, (uint)type, ref error);
+            NativeException.HandleError(error);
+            return result;
+        }
+
+        /**
+        * \if English
+        * @brief Get the metadata value
+        *
+        * @param type The metadata type. refer to @ref FrameMetadataType
+        * @return long The result
+        * \else
+        * @brief 获取元数据值
+        *
+        * @param type 元数据类型。请参考@ref FrameMetadataType
+        * @return long 元数据值
+        * \endif
+        */
+        public long GetMetadataValue(FrameMetadataType type)
+        {
+            IntPtr error = IntPtr.Zero;
+            long value = obNative.ob_frame_get_metadata_value(_handle.Ptr, (uint)type, ref error);
+            NativeException.HandleError(error);
+            return value;
         }
 
         internal void Delete(IntPtr handle)
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_frame(handle, ref error);
-            if(error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         public void Dispose()
@@ -280,7 +407,7 @@ namespace Orbbec
         public UInt32 GetWidth()
         {
             IntPtr error = IntPtr.Zero;
-            return obNative.ob_video_frame_width(_handle.Ptr, ref error);
+            return obNative.ob_video_frame_get_width(_handle.Ptr, ref error);
         }
 
         /**
@@ -297,45 +424,7 @@ namespace Orbbec
         public UInt32 GetHeight()
         {
             IntPtr error = IntPtr.Zero;
-            return obNative.ob_video_frame_height(_handle.Ptr, ref error);
-        }
-
-        /**
-        * \if English
-        * @brief Get the metadata of the frame
-        *
-        * @return Byte[] returns the metadata of the frame
-        * \else
-        * @brief 获取帧的元数据
-        *
-        * @return Byte[] 返回帧的元数据
-        * \endif
-        */
-        public Byte[] GetMetadata()
-        {
-            IntPtr error = IntPtr.Zero;
-            IntPtr data = obNative.ob_frame_metadata(_handle.Ptr, ref error);
-            UInt32 dataSize = obNative.ob_frame_metadata_size(_handle.Ptr, ref error);
-            Byte[] buffer = new Byte[dataSize];
-            Marshal.Copy(data, buffer, 0, (int)dataSize);
-            return buffer;
-        }
-
-        /**
-        * \if English
-        * @brief Get the metadata size of the frame
-        *
-        * @return UInt32 returns the metadata size of the frame
-        * \else
-        * @brief 获取帧的元数据大小
-        *
-        * @return UInt32 返回帧的元数据大小
-        * \endif
-        */
-        public UInt32 GetMetadataSize()
-        {
-            IntPtr error = IntPtr.Zero;
-            return obNative.ob_frame_metadata_size(_handle.Ptr, ref error);
+            return obNative.ob_video_frame_get_height(_handle.Ptr, ref error);
         }
 
         /**
@@ -354,7 +443,37 @@ namespace Orbbec
         byte PixelAvailableBitSize()
         {
             IntPtr error = IntPtr.Zero;
-            return obNative.ob_video_frame_pixel_available_bit_size(_handle.Ptr, ref error);
+            return obNative.ob_video_frame_get_pixel_available_bit_size(_handle.Ptr, ref error);
+        }
+
+        public static VideoFrame Create(FrameType frameType, Format format, UInt32 width, UInt32 height, UInt32 strideBytes)
+        {
+            IntPtr error = IntPtr.Zero;
+            IntPtr handle = obNative.ob_create_video_frame(frameType, format, width, height, strideBytes, ref error);
+            NativeException.HandleError(error);
+            return new VideoFrame(handle);
+        }
+
+        public PixelType GetPixelType()
+        {
+            IntPtr error = IntPtr.Zero;
+            PixelType type =  obNative.ob_video_frame_get_pixel_type(_handle.Ptr, ref error);
+            NativeException.HandleError(error);
+            return type;
+        }
+
+        public void SetPixelType(PixelType pixelType)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_video_frame_set_pixel_type(_handle.Ptr, pixelType, ref error);
+            NativeException.HandleError(error);
+        }
+
+        public void SetPixelAvailableBitSize(UInt16 bitSize)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_video_frame_set_pixel_available_bit_size(_handle.Ptr, bitSize, ref error);
+            NativeException.HandleError(error);
         }
     }
 
@@ -425,7 +544,41 @@ namespace Orbbec
         public float GetPositionValueScale()
         {
             IntPtr error = IntPtr.Zero;
-            return obNative.ob_points_frame_get_position_value_scale(_handle.Ptr, ref error);
+            return obNative.ob_points_frame_get_coordinate_value_scale(_handle.Ptr, ref error);
+        }
+
+        /**
+        * \if English
+        * @brief Get point cloud frame width
+        *
+        * @return uint32_t return the point cloud frame width
+        * \else
+        * @brief 获取点云帧的宽
+        *
+        * @return uint32_t 返回点云帧的宽
+        * \endif
+        */
+        public UInt32 GetWidth()
+        {
+            IntPtr error = IntPtr.Zero;
+            return obNative.ob_point_cloud_frame_get_width(_handle.Ptr, ref error);
+        }
+
+        /**
+        * \if English
+        * @brief Get point cloud frame height
+        *
+        * @return uint32_t return the point cloud frame height
+        * \else
+        * @brief 获取点云帧的高
+        *
+        * @return uint32_t 返回点云帧的高
+        * \endif
+        */
+        public UInt32 GetHeight()
+        {
+            IntPtr error = IntPtr.Zero;
+            return obNative.ob_point_cloud_frame_get_height(_handle.Ptr, ref error);
         }
     }
 
@@ -443,7 +596,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             AccelValue accelValue;
-            obNative.ob_accel_frame_value(out accelValue, _handle.Ptr, ref error);
+            obNative.ob_accel_frame_get_value(out accelValue, _handle.Ptr, ref error);
             return accelValue;
         }
 
@@ -454,7 +607,7 @@ namespace Orbbec
         public float GetTemperature()
         {
             IntPtr error = IntPtr.Zero;
-            return obNative.ob_accel_frame_temperature(_handle.Ptr, ref error);
+            return obNative.ob_accel_frame_get_temperature(_handle.Ptr, ref error);
         }
     }
 
@@ -472,7 +625,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             GyroValue gyroValue;
-            obNative.ob_gyro_frame_value(out gyroValue, _handle.Ptr, ref error);
+            obNative.ob_gyro_frame_get_value(out gyroValue, _handle.Ptr, ref error);
             return gyroValue;
         }
 
@@ -483,7 +636,7 @@ namespace Orbbec
         public float GetTemperature()
         {
             IntPtr error = IntPtr.Zero;
-            return obNative.ob_gyro_frame_temperature(_handle.Ptr, ref error);
+            return obNative.ob_gyro_frame_get_temperature(_handle.Ptr, ref error);
         }
     }
 
@@ -507,7 +660,7 @@ namespace Orbbec
         public UInt32 GetFrameCount()
         {
             IntPtr error = IntPtr.Zero;
-            return obNative.ob_frameset_frame_count(_handle.Ptr, ref error);
+            return obNative.ob_frameset_get_count(_handle.Ptr, ref error);
         }
 
         /**
@@ -524,7 +677,7 @@ namespace Orbbec
         public DepthFrame GetDepthFrame()
         {
             IntPtr error = IntPtr.Zero;
-            IntPtr handle = obNative.ob_frameset_depth_frame(_handle.Ptr, ref error);
+            IntPtr handle = obNative.ob_frameset_get_depth_frame(_handle.Ptr, ref error);
             if(handle == IntPtr.Zero)
             {
                 return null;
@@ -546,7 +699,7 @@ namespace Orbbec
         public ColorFrame GetColorFrame()
         {
             IntPtr error = IntPtr.Zero;
-            IntPtr handle = obNative.ob_frameset_color_frame(_handle.Ptr, ref error);
+            IntPtr handle = obNative.ob_frameset_get_color_frame(_handle.Ptr, ref error);
             if (handle == IntPtr.Zero)
             {
                 return null;
@@ -568,7 +721,7 @@ namespace Orbbec
         public IRFrame GetIRFrame()
         {
             IntPtr error = IntPtr.Zero;
-            IntPtr handle = obNative.ob_frameset_ir_frame(_handle.Ptr, ref error);
+            IntPtr handle = obNative.ob_frameset_get_ir_frame(_handle.Ptr, ref error);
             if (handle == IntPtr.Zero)
             {
                 return null;
@@ -590,7 +743,7 @@ namespace Orbbec
         public PointsFrame GetPointsFrame()
         {
             IntPtr error = IntPtr.Zero;
-            IntPtr handle = obNative.ob_frameset_points_frame(_handle.Ptr, ref error);
+            IntPtr handle = obNative.ob_frameset_get_points_frame(_handle.Ptr, ref error);
             if (handle == IntPtr.Zero)
             {
                 return null;
@@ -620,6 +773,13 @@ namespace Orbbec
                 return null;
             }
             return new Frame(handle);
+        }
+
+        public void PushFrame(Frame frame)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_frameset_push_frame(_handle.Ptr, frame.GetNativeHandle().Ptr, ref error);
+            NativeException.HandleError(error);
         }
     }
 }

@@ -68,76 +68,107 @@ namespace OrbbecUnity
         private void InitConfig()
         {
             config = new Config();
-            for (int i = 0; i < orbbecProfiles.Length - 1; i++)
+            EnableFirstMatchingProfile(SensorType.OB_SENSOR_COLOR);
+            EnableFirstMatchingProfile(SensorType.OB_SENSOR_DEPTH);
+            EnableFirstMatchingProfile(SensorType.OB_SENSOR_IR);
+            EnableFirstMatchingProfile(SensorType.OB_SENSOR_IR_LEFT);
+            EnableFirstMatchingProfile(SensorType.OB_SENSOR_IR_RIGHT);
+        }
+
+        private void EnableFirstMatchingProfile(SensorType sensorType)
+        {
+            for (int i = 0; i < orbbecProfiles.Length; i++)
             {
-                var streamProfile = FindProfile(orbbecProfiles[i], StreamType.OB_STREAM_COLOR);
-                if (streamProfile != null)
+                var obProfile = orbbecProfiles[i];
+                if (obProfile == null || obProfile.sensorType != sensorType)
                 {
-                    config.EnableStream(streamProfile);
-                    break;
+                    continue;
                 }
-            }
-            for (int i = 0; i < orbbecProfiles.Length - 1; i++)
-            {
-                var streamProfile = FindProfile(orbbecProfiles[i], StreamType.OB_STREAM_DEPTH);
-                if (streamProfile != null)
+
+                if (TryEnableProfile(obProfile))
                 {
-                    config.EnableStream(streamProfile);
-                    break;
-                }
-            }
-            for (int i = 0; i < orbbecProfiles.Length - 1; i++)
-            {
-                var streamProfile = FindProfile(orbbecProfiles[i], StreamType.OB_STREAM_IR);
-                if (streamProfile != null)
-                {
-                    config.EnableStream(streamProfile);
-                    break;
-                }
-            }
-            for (int i = 0; i < orbbecProfiles.Length - 1; i++)
-            {
-                var streamProfile = FindProfile(orbbecProfiles[i], StreamType.OB_STREAM_IR_LEFT);
-                if (streamProfile != null)
-                {
-                    config.EnableStream(streamProfile);
-                    break;
-                }
-            }
-            for (int i = 0; i < orbbecProfiles.Length - 1; i++)
-            {
-                var streamProfile = FindProfile(orbbecProfiles[i], StreamType.OB_STREAM_IR_RIGHT);
-                if (streamProfile != null)
-                {
-                    config.EnableStream(streamProfile);
-                    break;
+                    return;
                 }
             }
         }
 
-        private VideoStreamProfile FindProfile(OrbbecProfile obProfile, StreamType streamType)
+        private bool TryEnableProfile(OrbbecProfile obProfile)
         {
+            StreamProfileList profileList = null;
             try
             {
-                var profileList = pipeline.GetStreamProfileList(obProfile.sensorType);
-                VideoStreamProfile streamProfile = profileList.GetVideoStreamProfile(obProfile.width, obProfile.height, obProfile.format, obProfile.fps);
-                if (streamProfile != null && streamProfile.GetStreamType() == streamType)
+                profileList = pipeline.GetStreamProfileList(obProfile.sensorType);
+                if (profileList.ProfileCount() == 0)
                 {
-                    Debug.LogFormat("Profile found: {0}x{1}@{2} {3}",
-                            streamProfile.GetWidth(),
-                            streamProfile.GetHeight(),
-                            streamProfile.GetFPS(),
-                            streamProfile.GetFormat());
-                    return streamProfile;
+                    return false;
                 }
-                else
+
+                var matchedProfile = FindMatchingVideoProfile(profileList, obProfile);
+                if (matchedProfile != null)
                 {
-                    Debug.LogWarning("Profile not found");
+                    config.EnableStream(matchedProfile);
+                    Debug.LogFormat("Profile enabled: {0}x{1}@{2} {3}",
+                        matchedProfile.GetWidth(),
+                        matchedProfile.GetHeight(),
+                        matchedProfile.GetFPS(),
+                        matchedProfile.GetFormat());
+                    return true;
                 }
             }
             catch (NativeException e)
             {
-                Debug.Log(e.Message);
+                Debug.LogWarning(e.Message);
+            }
+            finally
+            {
+                profileList?.Dispose();
+            }
+
+            return false;
+        }
+
+        private static VideoStreamProfile FindMatchingVideoProfile(StreamProfileList profileList, OrbbecProfile obProfile)
+        {
+            var format = obProfile.GetNormalizedFormat();
+            uint count = profileList.ProfileCount();
+
+            for (int i = 0; i < count; i++)
+            {
+                StreamProfile streamProfile = null;
+                VideoStreamProfile videoProfile = null;
+                try
+                {
+                    streamProfile = profileList.GetProfile(i);
+                    videoProfile = streamProfile.As<VideoStreamProfile>();
+                    if (videoProfile == null)
+                    {
+                        continue;
+                    }
+
+                    if (obProfile.width > 0 && videoProfile.GetWidth() != obProfile.width)
+                    {
+                        continue;
+                    }
+                    if (obProfile.height > 0 && videoProfile.GetHeight() != obProfile.height)
+                    {
+                        continue;
+                    }
+                    if (obProfile.fps > 0 && videoProfile.GetFPS() != obProfile.fps)
+                    {
+                        continue;
+                    }
+                    if (format != Format.OB_FORMAT_ANY && videoProfile.GetFormat() != format)
+                    {
+                        continue;
+                    }
+
+                    streamProfile = null;
+                    return videoProfile;
+                }
+                finally
+                {
+                    streamProfile?.Dispose();
+                }
             }
 
             return null;

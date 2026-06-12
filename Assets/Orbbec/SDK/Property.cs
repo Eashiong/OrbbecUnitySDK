@@ -35,6 +35,11 @@ namespace Orbbec
         OB_PROP_FLOOD_LEVEL_INT = 7,
 
         /**
+         * @brief Enable/disable temperature compensation
+         */
+        OB_PROP_TEMPERATURE_COMPENSATION_BOOL = 8,
+
+        /**
          * @brief Depth mirror
          */
         OB_PROP_DEPTH_MIRROR_BOOL = 14,
@@ -85,14 +90,14 @@ namespace Orbbec
         OB_PROP_LDP_STATUS_BOOL = 32,
 
         /**
-         * @brief soft filter maxdiff param
+         * @brief maxdiff for depth noise removal filter
          */
-        OB_PROP_DEPTH_MAX_DIFF_INT = 40,
+        OB_PROP_DEPTH_NOISE_REMOVAL_FILTER_MAX_DIFF_INT = 40,
 
         /**
-         * @brief soft filter maxSpeckleSize
+         * @brief maxSpeckleSize for depth noise removal filter
          */
-        OB_PROP_DEPTH_MAX_SPECKLE_SIZE_INT = 41,
+        OB_PROP_DEPTH_NOISE_REMOVAL_FILTER_MAX_SPECKLE_SIZE_INT = 41,
 
         /**
          * @brief Hardware d2c is on
@@ -194,6 +199,11 @@ namespace Orbbec
          * @brief D2C preprocessing switch (such as RGB cropping), 0: off, 1: on
          */
         OB_PROP_D2C_PREPROCESS_BOOL = 91,
+
+        /**
+         * @brief Enable/disable GPM function
+         */
+        OB_PROP_GPM_BOOL = 93,
 
         /**
          * @brief Custom RGB cropping switch, 0 is off, 1 is on custom cropping, and the ROI cropping area is issued
@@ -368,11 +378,6 @@ namespace Orbbec
         OB_PROP_LASER_PULSE_WIDTH_PROTECTION_STATUS_BOOL = 149,
 
         /**
-        * @brief depth noise removal filter
-        */
-        OB_PROP_DEPTH_NOISE_REMOVAL_FILTER_BOOL = 165,
-
-        /**
         * @brief Laser always on, true: always on, false: off, laser will be turned off when out of exposure time
         */
         OB_PROP_LASER_ALWAYS_ON_BOOL = 174,
@@ -419,6 +424,82 @@ namespace Orbbec
         * @brief disparity search range mode
         */
         OB_PROP_DISP_SEARCH_RANGE_MODE_INT = 191,
+
+        /**
+         * @brief Laser high temperature protection
+         */
+        OB_PROP_LASER_HIGH_TEMPERATURE_PROTECT_BOOL = 193,
+
+        /**
+         * @brief low exposure laser control
+         *
+         * @brief Currently using for DabaiA device,if the exposure value is lower than a certain threshold, the laser is turned off;
+         * if it exceeds another threshold, the laser is turned on again.
+         */
+        OB_PROP_LOW_EXPOSURE_LASER_CONTROL_BOOL = 194,
+
+        /**
+         * @brief check pps sync in signal
+         */
+        OB_PROP_CHECK_PPS_SYNC_IN_SIGNAL_BOOL = 195,
+
+        /**
+         * @brief Disparity search range offset, range: [0, 127]
+         */
+        OB_PROP_DISP_SEARCH_OFFSET_INT = 196,
+
+        /**
+         * @brief Repower device (cut off power and power on again)
+         *
+         * @brief Currently using for GMSL device, cut off power and power on again by GMSL host driver.
+         */
+        OB_PROP_DEVICE_REPOWER_BOOL = 202,
+
+        /**
+         * @brief frame interleave config index
+         */
+        OB_PROP_FRAME_INTERLEAVE_CONFIG_INDEX_INT = 204,
+
+        /**
+         * @brief frame interleave enable (true:enable,false:disable)
+         */
+        OB_PROP_FRAME_INTERLEAVE_ENABLE_BOOL = 205,
+
+        /**
+         * @brief laser pattern sync with delay(us)
+         */
+        OB_PROP_FRAME_INTERLEAVE_LASER_PATTERN_SYNC_DELAY_INT = 206,
+
+        /**
+         * @brief Get the health check result from device,range is [0.0f,1.5f]
+         */
+        OB_PROP_ON_CHIP_CALIBRATION_HEALTH_CHECK_FLOAT = 209,
+
+        /**
+         * @brief Enable or disable on-chip calibration
+         */
+        OB_PROP_ON_CHIP_CALIBRATION_ENABLE_BOOL = 210,
+
+        /**
+         * @brief hardware noise remove filter switch
+         */
+        OB_PROP_HW_NOISE_REMOVE_FILTER_ENABLE_BOOL = 211,
+
+        /**
+         * @brief hardware noise remove filter threshold ,range [0.0 - 1.0]
+         */
+        OB_PROP_HW_NOISE_REMOVE_FILTER_THRESHOLD_FLOAT = 212,
+
+        /**
+         * @brief soft trigger auto capture enable, use in OB_MULTI_DEVICE_SYNC_MODE_SOFTWARE_TRIGGERING mode
+         */
+        OB_DEVICE_AUTO_CAPTURE_ENABLE_BOOL = 216,
+
+        /**
+         * @brief soft trigger auto capture interval time, use in OB_MULTI_DEVICE_SYNC_MODE_SOFTWARE_TRIGGERING mode
+         */
+        OB_DEVICE_AUTO_CAPTURE_INTERVAL_TIME_INT = 217,
+
         /**
          * @brief Baseline calibration parameters
          */
@@ -502,6 +583,11 @@ namespace Orbbec
         * @brief ASIC serial number
         */
         OB_STRUCT_ASIC_SERIAL_NUMBER = 1063,
+
+        /**
+         * @brief Disparity offset interleaving
+         */
+        OB_STRUCT_DISP_OFFSET_CONFIG = 1064,
 
         /**
          * @brief Color camera auto exposure
@@ -664,6 +750,16 @@ namespace Orbbec
         OB_PROP_COLOR_FOCUS_INT = 2038,
 
         /**
+         * @brief ir rectify status,true: ir rectify, false: no rectify
+         */
+        OB_PROP_IR_RECTIFY_BOOL = 2040,
+
+        /**
+         * @brief Depth camera priority
+         */
+        OB_PROP_DEPTH_AUTO_EXPOSURE_PRIORITY_INT = 2052,
+
+        /**
          * @brief Software disparity to depth
          */
         OB_PROP_SDK_DISPARITY_TO_DEPTH_BOOL = 3004,
@@ -699,14 +795,34 @@ namespace Orbbec
         OB_PROP_SDK_IR_RIGHT_FRAME_UNPACK_BOOL = 3012,
 
         /**
-        * @brief depth Margin Filter
-        */
-        OB_PROP_SDK_DEPTH_RECTIFY_MG_FILTER_BOOL = 3013,
+         * @brief Read the current network bandwidth type of the network device, whether it is Gigabit Ethernet or Fast Ethernet, such as G335LE.
+         */
+        OB_PROP_NETWORK_BANDWIDTH_TYPE_INT = 3027,
+
+        /**
+         * @brief Switch device performance mode, currently available in Adaptive Mode and High Performance Mode, such as G335LE.
+         */
+        OB_PROP_DEVICE_PERFORMANCE_MODE_INT = 3028,
 
         /**
          * @brief Calibration JSON file read from device (Femto Mega, read only)
          */
         OB_RAW_DATA_CAMERA_CALIB_JSON_FILE = 4029,
+
+        /**
+        * @brief depth noise removal filter
+        */
+        OB_PROP_DEPTH_NOISE_REMOVAL_FILTER_BOOL = OB_PROP_DEPTH_SOFT_FILTER_BOOL,
+
+        /**
+         * @brief soft filter maxdiff param
+         */
+        OB_PROP_DEPTH_MAX_DIFF_INT = OB_PROP_DEPTH_NOISE_REMOVAL_FILTER_MAX_DIFF_INT,
+
+        /**
+         * @brief soft filter maxSpeckleSize
+         */
+        OB_PROP_DEPTH_MAX_SPECKLE_SIZE_INT = OB_PROP_DEPTH_NOISE_REMOVAL_FILTER_MAX_SPECKLE_SIZE_INT,
     }
 
     public enum PropertyType
@@ -719,9 +835,9 @@ namespace Orbbec
 
     public struct PropertyItem
     {
-        PropertyId id;          ///< \if English Property id \else 属性id \endif
-        IntPtr name;        ///< \if English Property name \else 属性名字 \endif
-        PropertyType type;        ///< \if English Property type \else 属性类型 \endif
-        PermissionType permission;  ///< \if English Property read and write permission \else 属性读写权限 \endif
+        public PropertyId id;          ///< \if English Property id \else 属性id \endif
+        public IntPtr name;        ///< \if English Property name \else 属性名字 \endif
+        public PropertyType type;        ///< \if English Property type \else 属性类型 \endif
+        public PermissionType permission;  ///< \if English Property read and write permission \else 属性读写权限 \endif
     }
 }

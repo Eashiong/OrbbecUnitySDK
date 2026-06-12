@@ -11,10 +11,10 @@ namespace Orbbec
     {
         private NativeHandle _handle;
         private NativeDeviceChangedCallback _nativeDeviceChangedCallback;
-        public static Dictionary<IntPtr, DeviceChangedCallback> _deviceChangedCallbacks = new Dictionary<IntPtr, DeviceChangedCallback>();
+        private static Dictionary<IntPtr, DeviceChangedCallback> _deviceChangedCallbacks = new Dictionary<IntPtr, DeviceChangedCallback>();
         private static LogCallback _logCallback;
         private static NativeLogCallback _nativeLogCallback;
-        
+
 #if ORBBEC_UNITY
         [AOT.MonoPInvokeCallback(typeof(NativeDeviceChangedCallback))]
 #endif
@@ -33,10 +33,10 @@ namespace Orbbec
                 added.Dispose();
             }
         }
-        
+
 #if ORBBEC_UNITY
         [AOT.MonoPInvokeCallback(typeof(NativeLogCallback))]
-#endif        
+#endif
         private static void OnLogCallback(LogSeverity logSeverity, String message, IntPtr userData)
         {
             if(_logCallback != null)
@@ -59,10 +59,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_create_context(ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
             _nativeDeviceChangedCallback = new NativeDeviceChangedCallback(OnDeviceChanged);
             _nativeLogCallback = new NativeLogCallback(OnLogCallback);
@@ -82,10 +79,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_create_context_with_config(configPath, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
             _nativeDeviceChangedCallback = new NativeDeviceChangedCallback(OnDeviceChanged);
         }
@@ -105,10 +99,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_query_device_list(_handle.Ptr, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new DeviceList(handle);
         }
 
@@ -116,10 +107,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_enable_net_device_enumeration(_handle.Ptr, enable, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -133,10 +121,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             IntPtr handle = obNative.ob_create_net_device(_handle.Ptr, address, port, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
             return new Device(handle);
         }
 
@@ -156,10 +141,7 @@ namespace Orbbec
             _deviceChangedCallbacks[_handle.Ptr] = callback;
             IntPtr error = IntPtr.Zero;
             obNative.ob_set_device_changed_callback(_handle.Ptr, _nativeDeviceChangedCallback, _handle.Ptr, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -177,10 +159,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_enable_device_clock_sync(_handle.Ptr, repeatInterval, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -198,10 +177,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_set_logger_severity(logSeverity, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -221,10 +197,7 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_set_logger_to_file(logSeverity, directory, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         /**
@@ -242,31 +215,47 @@ namespace Orbbec
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_set_logger_to_console(logSeverity, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         public static void SetLoggerCallback(LogSeverity logSeverity, LogCallback callback)
         {
             _logCallback = callback;
             IntPtr error = IntPtr.Zero;
-            obNative.ob_set_logger_callback(logSeverity, _nativeLogCallback, IntPtr.Zero, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            obNative.ob_set_logger_to_callback(logSeverity, _nativeLogCallback, IntPtr.Zero, ref error);
+            NativeException.HandleError(error);
+        }
+
+        /**
+        * \if English
+        * @brief Set the extensions directory
+        * @brief The extensions directory is used to search for dynamic libraries that provide additional functionality to the SDK， such as the Frame filters.
+        *
+        * @attention Should be called before creating the context and pipeline, otherwise the default extensions directory (./extensions) will be used.
+        *
+        * @param directory Path to the extensions directory. If the path is empty, the existing settings will continue to be used (if the existing
+        * @param error Pointer to an error object that will be populated if an error occurs during extensions directory setting
+        * \else
+        * @brief 设置扩展目录
+        * @brief 扩展目录用于搜索为SDK提供额外功能的动态库，如Frame过滤器。
+        * 
+        * @attention 应在创建context和pipeline之前调用，否则将使用默认的扩展目录（./extensions）。
+        * 
+        * @param 扩展目录的路径。如果路径为空，则将继续使用现有设置（如果现有错误指针指向在扩展目录设置过程中发生错误时将填充的错误对象）
+        * \endif
+        */
+        public static void SetExtensionsDirectory(String directory)
+        {
+            IntPtr error = IntPtr.Zero;
+            obNative.ob_set_extensions_directory(directory, ref error);
+            NativeException.HandleError(error);
         }
 
         internal void Delete(IntPtr handle)
         {
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_context(handle, ref error);
-            if (error != IntPtr.Zero)
-            {
-                throw new NativeException(new Error(error));
-            }
+            NativeException.HandleError(error);
         }
 
         public void Dispose()

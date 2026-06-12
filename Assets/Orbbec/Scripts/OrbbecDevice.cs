@@ -26,11 +26,14 @@ namespace OrbbecUnity
 
         void Start()
         {
+            StartCoroutine(StartWhenReady());
+        }
+
+        private IEnumerator StartWhenReady()
+        {
+            yield return OrbbecContext.Instance.WaitUntilInitialized();
             context = OrbbecContext.Instance.Context;
-            if(OrbbecContext.Instance.HasInit)
-            {
-                StartCoroutine(WaitForDevice());
-            }
+            yield return WaitForDevice();
         }
 
         void OnDestroy()
@@ -46,7 +49,7 @@ namespace OrbbecUnity
             while (true)
             {
                 yield return new WaitForEndOfFrame();
-                context.EnableNetDeviceEnumeration(true);
+                OrbbecContext.TryEnableNetDeviceEnumeration(context, true);
                 DeviceList deviceList = context.QueryDeviceList();
                 if (deviceList.DeviceCount() > deviceIndex)
                 {

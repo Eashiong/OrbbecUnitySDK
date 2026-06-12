@@ -8,6 +8,7 @@ namespace OrbbecUnity
 public class AndroidDeviceManager
 {
     private static AndroidJavaClass UsbPermissionUtil;
+    private static bool usbDeviceStarted;
 
     public static void Init(Action onReady)
     {
@@ -27,13 +28,19 @@ public class AndroidDeviceManager
 
     private static void StartUsbDevice(Action onReady)
     {
-        // OBContext 必须先创建，waitForUsbDevice 内部才会注册 USB DeviceWatcher
+        // Context 必须先创建，waitForUsbDevice 内部才会注册 USB DeviceWatcher
         onReady?.Invoke();
+
+        if (usbDeviceStarted)
+        {
+            return;
+        }
 
         AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
         UsbPermissionUtil = new AndroidJavaClass("com.orbbec.obsensor.usbdevice.UsbPermissionUtil");
         UsbPermissionUtil.CallStatic("waitForUsbDevice", currentActivity);
+        usbDeviceStarted = true;
         Debug.Log("android device has init");
     }
 
@@ -47,6 +54,7 @@ public class AndroidDeviceManager
         Debug.Log("close android device");
         UsbPermissionUtil.CallStatic("closeUsbDevice");
         UsbPermissionUtil = null;
+        usbDeviceStarted = false;
     }
 }
 }

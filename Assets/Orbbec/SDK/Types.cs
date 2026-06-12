@@ -1668,7 +1668,7 @@ namespace Orbbec
         OB_FILTER_CONFIG_VALUE_TYPE_BOOLEAN = 2,
     }
 
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct FilterConfigSchemaItem
     {
         public IntPtr name;  ///< Name of the configuration item

@@ -62,7 +62,7 @@ namespace Orbbec
             NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
             _nativeDeviceChangedCallback = new NativeDeviceChangedCallback(OnDeviceChanged);
-            _nativeLogCallback = new NativeLogCallback(OnLogCallback);
+            EnsureNativeLogCallback();
         }
 
         /**
@@ -82,6 +82,7 @@ namespace Orbbec
             NativeException.HandleError(error);
             _handle = new NativeHandle(handle, Delete);
             _nativeDeviceChangedCallback = new NativeDeviceChangedCallback(OnDeviceChanged);
+            EnsureNativeLogCallback();
         }
 
         /**
@@ -221,9 +222,18 @@ namespace Orbbec
         public static void SetLoggerCallback(LogSeverity logSeverity, LogCallback callback)
         {
             _logCallback = callback;
+            EnsureNativeLogCallback();
             IntPtr error = IntPtr.Zero;
             obNative.ob_set_logger_to_callback(logSeverity, _nativeLogCallback, IntPtr.Zero, ref error);
             NativeException.HandleError(error);
+        }
+
+        private static void EnsureNativeLogCallback()
+        {
+            if (_nativeLogCallback == null)
+            {
+                _nativeLogCallback = new NativeLogCallback(OnLogCallback);
+            }
         }
 
         /**
@@ -253,6 +263,7 @@ namespace Orbbec
 
         internal void Delete(IntPtr handle)
         {
+            _deviceChangedCallbacks.Remove(handle);
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_context(handle, ref error);
             NativeException.HandleError(error);

@@ -189,5 +189,11 @@ namespace Orbbec
             NativeException.HandleError(error);
             return duration;
         }
+
+        internal override void Delete(IntPtr handle)
+        {
+            _playbackStatusChangedCallbacks.Remove(handle);
+            base.Delete(handle);
+        }
     }
 }

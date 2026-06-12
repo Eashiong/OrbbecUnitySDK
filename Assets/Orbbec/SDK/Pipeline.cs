@@ -310,6 +310,7 @@ namespace Orbbec
 
         internal void Delete(IntPtr handle)
         {
+            _framesetCallbacks.Remove(handle);
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_pipeline(handle, ref error);
             NativeException.HandleError(error);

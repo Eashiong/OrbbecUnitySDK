@@ -7,6 +7,14 @@ namespace OrbbecUnity
 {
     public class OrbbecContext : MonoBehaviour
     {
+#if !UNITY_EDITOR && UNITY_ANDROID
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void AndroidEarlyInit()
+        {
+            _ = Instance;
+        }
+#endif
+
         private static OrbbecContext instance;
         private bool hasInit;
         private Context context;
@@ -78,6 +86,9 @@ namespace OrbbecUnity
 
         private void InitSDK()
         {
+#if !UNITY_EDITOR && UNITY_ANDROID
+            OrbbecAndroidNativeSetup.LoadNativeLibraries();
+#endif
             Debug.LogFormat("Orbbec SDK version: {0}.{1}.{2}",
                                         Version.GetMajorVersion(),
                                         Version.GetMinorVersion(),
@@ -98,6 +109,8 @@ namespace OrbbecUnity
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             SetupWindowsNativePaths();
+#elif !UNITY_EDITOR && UNITY_ANDROID
+            OrbbecAndroidNativeSetup.PrepareNativePaths();
 #endif
             context = new Context();
             hasInit = true;

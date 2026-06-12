@@ -499,7 +499,7 @@ namespace Orbbec
 
         //ob_filter_config_schema_item ob_filter_config_schema_list_get_item(const ob_filter_config_schema_list *config_schema_list, uint32_t index, ob_error** error);
         [DllImport(obsdk, EntryPoint = "ob_filter_config_schema_list_get_item")]
-        public static extern void ob_filter_config_schema_list_get_item(out FilterConfigSchemaItem configSchemaItem, IntPtr filterConfigSchemaList, uint index, ref IntPtr error);
+        public static extern FilterConfigSchemaItem ob_filter_config_schema_list_get_item(IntPtr filterConfigSchemaList, uint index, ref IntPtr error);
 
         //void ob_delete_filter_config_schema_list(ob_filter_config_schema_list *config_schema_list, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_delete_filter_config_schema_list")]

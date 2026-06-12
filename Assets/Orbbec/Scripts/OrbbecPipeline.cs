@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Collections.Generic;
 using Orbbec;
 using UnityEngine;
 using UnityEngine.Events;
@@ -68,11 +68,25 @@ namespace OrbbecUnity
         private void InitConfig()
         {
             config = new Config();
-            EnableFirstMatchingProfile(SensorType.OB_SENSOR_COLOR);
-            EnableFirstMatchingProfile(SensorType.OB_SENSOR_DEPTH);
-            EnableFirstMatchingProfile(SensorType.OB_SENSOR_IR);
-            EnableFirstMatchingProfile(SensorType.OB_SENSOR_IR_LEFT);
-            EnableFirstMatchingProfile(SensorType.OB_SENSOR_IR_RIGHT);
+            if (orbbecProfiles == null || orbbecProfiles.Length == 0)
+            {
+                Debug.LogWarning("No Orbbec profiles configured for pipeline.");
+                return;
+            }
+
+            var sensorTypes = new HashSet<SensorType>();
+            foreach (var obProfile in orbbecProfiles)
+            {
+                if (obProfile != null)
+                {
+                    sensorTypes.Add(obProfile.sensorType);
+                }
+            }
+
+            foreach (var sensorType in sensorTypes)
+            {
+                EnableFirstMatchingProfile(sensorType);
+            }
         }
 
         private void EnableFirstMatchingProfile(SensorType sensorType)
@@ -94,6 +108,57 @@ namespace OrbbecUnity
 
         private bool TryEnableProfile(OrbbecProfile obProfile)
         {
+            if (TryEnableMatchedStreamProfile(obProfile))
+            {
+                return true;
+            }
+
+            var format = obProfile.GetNormalizedFormat();
+            bool hasFullVideoParams = obProfile.width > 0
+                && obProfile.height > 0
+                && obProfile.fps > 0
+                && format != Format.OB_FORMAT_ANY;
+
+            if (hasFullVideoParams)
+            {
+                try
+                {
+                    config.EnableVideoStream(
+                        obProfile.sensorType,
+                        obProfile.width,
+                        obProfile.height,
+                        obProfile.fps,
+                        format);
+                    Debug.LogFormat("Profile enabled (video stream): {0} {1}x{2}@{3} {4}",
+                        obProfile.sensorType,
+                        obProfile.width,
+                        obProfile.height,
+                        obProfile.fps,
+                        format);
+                    return true;
+                }
+                catch (NativeException e)
+                {
+                    Debug.LogWarning(e.Message);
+                }
+            }
+
+            try
+            {
+                config.EnableStream(obProfile.sensorType);
+                Debug.LogFormat("Profile enabled (default stream): {0}", obProfile.sensorType);
+                return true;
+            }
+            catch (NativeException e)
+            {
+                Debug.LogWarning(e.Message);
+            }
+
+            return false;
+        }
+
+        private bool TryEnableMatchedStreamProfile(OrbbecProfile obProfile)
+        {
             StreamProfileList profileList = null;
             try
             {
@@ -103,16 +168,51 @@ namespace OrbbecUnity
                     return false;
                 }
 
-                var matchedProfile = FindMatchingVideoProfile(profileList, obProfile);
-                if (matchedProfile != null)
+                var format = obProfile.GetNormalizedFormat();
+                uint count = profileList.ProfileCount();
+                for (int i = 0; i < count; i++)
                 {
-                    config.EnableStream(matchedProfile);
-                    Debug.LogFormat("Profile enabled: {0}x{1}@{2} {3}",
-                        matchedProfile.GetWidth(),
-                        matchedProfile.GetHeight(),
-                        matchedProfile.GetFPS(),
-                        matchedProfile.GetFormat());
-                    return true;
+                    StreamProfile streamProfile = null;
+                    try
+                    {
+                        streamProfile = profileList.GetProfile(i);
+                        var videoProfile = streamProfile.As<VideoStreamProfile>();
+                        if (videoProfile == null)
+                        {
+                            continue;
+                        }
+
+                        if (obProfile.width > 0 && videoProfile.GetWidth() != obProfile.width)
+                        {
+                            continue;
+                        }
+                        if (obProfile.height > 0 && videoProfile.GetHeight() != obProfile.height)
+                        {
+                            continue;
+                        }
+                        if (obProfile.fps > 0 && videoProfile.GetFPS() != obProfile.fps)
+                        {
+                            continue;
+                        }
+                        if (format != Format.OB_FORMAT_ANY && videoProfile.GetFormat() != format)
+                        {
+                            continue;
+                        }
+
+                        config.EnableStream(streamProfile);
+                        Debug.LogFormat("Profile enabled (matched): {0} {1}x{2}@{3} {4}",
+                            obProfile.sensorType,
+                            videoProfile.GetWidth(),
+                            videoProfile.GetHeight(),
+                            videoProfile.GetFPS(),
+                            videoProfile.GetFormat());
+                        streamProfile = null;
+                        return true;
+                    }
+                    finally
+                    {
+                        streamProfile?.Dispose();
+                    }
                 }
             }
             catch (NativeException e)
@@ -125,53 +225,6 @@ namespace OrbbecUnity
             }
 
             return false;
-        }
-
-        private static VideoStreamProfile FindMatchingVideoProfile(StreamProfileList profileList, OrbbecProfile obProfile)
-        {
-            var format = obProfile.GetNormalizedFormat();
-            uint count = profileList.ProfileCount();
-
-            for (int i = 0; i < count; i++)
-            {
-                StreamProfile streamProfile = null;
-                VideoStreamProfile videoProfile = null;
-                try
-                {
-                    streamProfile = profileList.GetProfile(i);
-                    videoProfile = streamProfile.As<VideoStreamProfile>();
-                    if (videoProfile == null)
-                    {
-                        continue;
-                    }
-
-                    if (obProfile.width > 0 && videoProfile.GetWidth() != obProfile.width)
-                    {
-                        continue;
-                    }
-                    if (obProfile.height > 0 && videoProfile.GetHeight() != obProfile.height)
-                    {
-                        continue;
-                    }
-                    if (obProfile.fps > 0 && videoProfile.GetFPS() != obProfile.fps)
-                    {
-                        continue;
-                    }
-                    if (format != Format.OB_FORMAT_ANY && videoProfile.GetFormat() != format)
-                    {
-                        continue;
-                    }
-
-                    streamProfile = null;
-                    return videoProfile;
-                }
-                finally
-                {
-                    streamProfile?.Dispose();
-                }
-            }
-
-            return null;
         }
 
         public void SetFramesetCallback(FramesetCallback callback)

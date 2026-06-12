@@ -22,8 +22,7 @@ namespace Orbbec
         public FilterConfigSchemaItem GetProfile(UInt32 index)
         {
             IntPtr error = IntPtr.Zero;
-            FilterConfigSchemaItem item;
-            obNative.ob_filter_config_schema_list_get_item(out item, _handle.Ptr, index, ref error);
+            FilterConfigSchemaItem item = obNative.ob_filter_config_schema_list_get_item(_handle.Ptr, index, ref error);
             NativeException.HandleError(error);
             return item;
         }

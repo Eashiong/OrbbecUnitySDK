@@ -808,8 +808,10 @@ namespace Orbbec
             NativeException.HandleError(error);
         }
 
-        internal void Delete(IntPtr handle)
+        internal virtual void Delete(IntPtr handle)
         {
+            _deviceStateCallbacks.Remove(handle);
+            _deviceUpgradeCallbacks.Remove(handle);
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_device(handle, ref error);
             NativeException.HandleError(error);

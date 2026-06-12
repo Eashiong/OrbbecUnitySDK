@@ -46,8 +46,7 @@ namespace Orbbec
 
             for (uint i = 0; i < count; i++)
             {
-                FilterConfigSchemaItem item;
-                obNative.ob_filter_config_schema_list_get_item(out item, configSchemaListPtr, i, ref error);
+                FilterConfigSchemaItem item = obNative.ob_filter_config_schema_list_get_item(configSchemaListPtr, i, ref error);
                 NativeException.HandleError(error);
 
                 _configSchemaList.Add(item);
@@ -294,6 +293,7 @@ namespace Orbbec
 
         internal virtual void Delete(IntPtr handle)
         {
+            _filterCallbacks.Remove(handle);
             IntPtr error = IntPtr.Zero;
             obNative.ob_delete_filter(handle, ref error);
             NativeException.HandleError(error);

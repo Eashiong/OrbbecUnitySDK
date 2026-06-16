@@ -19,6 +19,10 @@ namespace OrbbecUnity
         private Config config;
         private FramesetCallback framesetCallback;
 
+        // streaming: 业务上是否处于“应当出流”的状态；autoPaused: 因暂停/切后台被自动停流，恢复时需自动重启。
+        private bool streaming;
+        private bool autoPaused;
+
         public bool HasInit
         {
             get
@@ -46,12 +50,90 @@ namespace OrbbecUnity
         void Start()
         {
             orbbecDevice.onDeviceFound.AddListener(InitPipeline);
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.pauseStateChanged += OnEditorPauseStateChanged;
+#endif
+        }
+
+        // 真机/Standalone：应用切后台或被系统暂停时触发。
+        void OnApplicationPause(bool paused)
+        {
+            HandleAutoPause(paused);
+        }
+
+#if UNITY_EDITOR
+        // 编辑器：点击 Pause/继续时触发。暂停时必须停掉原生回调线程，
+        // 否则后台线程持续分配托管内存触发 GC，而主线程被暂停无法协调，会导致编辑器原生崩溃。
+        private void OnEditorPauseStateChanged(UnityEditor.PauseState state)
+        {
+            HandleAutoPause(state == UnityEditor.PauseState.Paused);
+        }
+#endif
+
+        // 暂停时停流（Stop 会让原生回调线程停止并 join），恢复时按原配置自动重启。
+        private void HandleAutoPause(bool paused)
+        {
+            if (!hasInit || pipeline == null)
+            {
+                return;
+            }
+
+            if (paused)
+            {
+                if (!streaming || autoPaused)
+                {
+                    return;
+                }
+
+                try
+                {
+                    pipeline.Stop();
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning($"[OrbbecPipeline] Auto stop on pause failed: {e.Message}");
+                }
+                autoPaused = true;
+            }
+            else
+            {
+                if (!autoPaused)
+                {
+                    return;
+                }
+
+                try
+                {
+                    pipeline.Start(config, framesetCallback);
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning($"[OrbbecPipeline] Auto restart on resume failed: {e.Message}");
+                }
+                autoPaused = false;
+            }
         }
 
         void OnDestroy()
         {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.pauseStateChanged -= OnEditorPauseStateChanged;
+#endif
             if (hasInit)
             {
+                hasInit = false;
+                streaming = false;
+                // 必须先 Stop 让原生回调线程停止并 join，再 Dispose，
+                // 否则回调线程仍在投递帧时释放 pipeline 会导致编辑器原生崩溃。
+                try
+                {
+                    pipeline.Stop();
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogWarning($"[OrbbecPipeline] Stop on destroy failed: {e.Message}");
+                }
+
                 config.Dispose();
                 pipeline.Dispose();
             }
@@ -235,11 +317,19 @@ namespace OrbbecUnity
         public void StartPipeline()
         {
             pipeline.Start(config, framesetCallback);
+            streaming = true;
+            autoPaused = false;
         }
 
         public void StopPipeline()
         {
+            if (!streaming)
+            {
+                return;
+            }
             pipeline.Stop();
+            streaming = false;
+            autoPaused = false;
         }
     }
 }

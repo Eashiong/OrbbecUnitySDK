@@ -26,6 +26,10 @@ public class PointCloudStream : MonoBehaviour
 
     private byte[] rawData;
 
+    // 回调线程与销毁（Dispose 原生对象）互斥，避免 Stop/退出 Play 时的竞态崩溃。
+    private readonly object _processLock = new object();
+    private volatile bool _disposed;
+
     // 双缓冲：回调线程写入 _pending*，主线程在 Update 中提交
     private readonly object _bufferLock = new object();
     private Vector3[] _pendingVertices;
@@ -57,14 +61,24 @@ public class PointCloudStream : MonoBehaviour
 
     void OnDestroy()
     {
-        _colorConvertFilter?.Dispose();
-        _colorConvertFilter = null;
+        // 先阻止后续回调进入处理，再在锁内释放原生对象：
+        // 若回调线程正处于 ProcessFramesetLocked 中，OnDestroy 会等待其完成后再 Dispose，
+        // 之后到达的回调因 _disposed/pipelineReady 为假而直接跳过，杜绝 use-after-free 崩溃。
+        pipelineReady = false;
 
-        alignFilter?.Dispose();
-        alignFilter = null;
+        lock (_processLock)
+        {
+            _disposed = true;
 
-        filter?.Dispose();
-        filter = null;
+            _colorConvertFilter?.Dispose();
+            _colorConvertFilter = null;
+
+            alignFilter?.Dispose();
+            alignFilter = null;
+
+            filter?.Dispose();
+            filter = null;
+        }
     }
 
     private void OnPipelineInit()
@@ -123,36 +137,47 @@ public class PointCloudStream : MonoBehaviour
             return;
         }
 
-        if (!pipelineReady || filter == null)
+        lock (_processLock)
         {
-            frameset.Dispose();
-            return;
+            if (_disposed || !pipelineReady || filter == null)
+            {
+                frameset.Dispose();
+                return;
+            }
+
+            ProcessFramesetLocked(frameset);
         }
+    }
 
-        DepthFrame depthFrame = frameset.GetDepthFrame();
-        ColorFrame colorFrame = frameset.GetColorFrame();
-
-        if (depthFrame == null)
-        {
-            frameset.Dispose();
-            return;
-        }
-
-        if (useColorPointCloud && colorFrame == null)
-        {
-            frameset.Dispose();
-            return;
-        }
-
-        if (colorFrame != null)
-        {
-            ExtractColorFrame(colorFrame);
-        }
-
+    private void ProcessFramesetLocked(Frameset frameset)
+    {
+        // 关键：回调拿到的每一个帧都持有帧池里的一块缓冲，必须显式 Dispose。
+        // 否则只能等 GC 终结器回收，暂停时 GC 停摆会导致帧池耗尽、原生采集线程崩溃。
+        DepthFrame depthFrame = null;
+        ColorFrame colorFrame = null;
         Frame alignedFrameset = null;
         Frame pointCloudFrame = null;
+        PointsFrame pointFrame = null;
         try
         {
+            depthFrame = frameset.GetDepthFrame();
+            colorFrame = frameset.GetColorFrame();
+
+            if (depthFrame == null)
+            {
+                return;
+            }
+
+            if (useColorPointCloud && colorFrame == null)
+            {
+                return;
+            }
+
+            if (colorFrame != null)
+            {
+                ExtractColorFrame(colorFrame);
+            }
+
             Frame filterInput = frameset;
             if (useColorPointCloud)
             {
@@ -169,7 +194,7 @@ public class PointCloudStream : MonoBehaviour
                 return;
             }
 
-            var pointFrame = pointCloudFrame.As<PointsFrame>();
+            pointFrame = pointCloudFrame.As<PointsFrame>();
             int dataSize = (int)pointFrame.GetDataSize();
             if (dataSize <= 0)
             {
@@ -186,28 +211,51 @@ public class PointCloudStream : MonoBehaviour
 
             int structSize = useColorPointCloud ? ColorPointStructSize : PointStructSize;
             int totalPoints = dataSize / structSize;
-            int count = Mathf.Min(totalPoints, maxPointCount);
-            if (count <= 0)
+            if (totalPoints <= 0)
+            {
+                return;
+            }
+
+            // 点云是 width×height 的二维网格，必须按二维行列等步长降采样，
+            // 否则按一维等距抽取会因步长与行宽不对齐而产生条纹（摩尔纹）。
+            int width = (int)pointFrame.GetWidth();
+            int height = (int)pointFrame.GetHeight();
+            if (width <= 0 || height <= 0 || width * height > totalPoints)
+            {
+                width = totalPoints;
+                height = 1;
+            }
+
+            int stride = 1;
+            if (maxPointCount > 0 && totalPoints > maxPointCount)
+            {
+                stride = Mathf.Max(1, Mathf.CeilToInt(Mathf.Sqrt((float)totalPoints / maxPointCount)));
+            }
+
+            int gridCols = (width + stride - 1) / stride;
+            int gridRows = (height + stride - 1) / stride;
+            int capacity = gridCols * gridRows;
+            if (capacity <= 0)
             {
                 return;
             }
 
             lock (_bufferLock)
             {
-                if (_pendingVertices == null || _pendingVertices.Length != count)
+                if (_pendingVertices == null || _pendingVertices.Length != capacity)
                 {
-                    _pendingVertices = new Vector3[count];
-                    _pendingColors = useColorPointCloud ? new Color[count] : null;
+                    _pendingVertices = new Vector3[capacity];
+                    _pendingColors = useColorPointCloud ? new Color[capacity] : null;
                 }
             }
 
-            if (useColorPointCloud)
+            int count = useColorPointCloud
+                ? FillColorPointBuffers(rawData, width, height, stride, positionScale, _pendingVertices, _pendingColors)
+                : FillPointBuffers(rawData, width, height, stride, positionScale, _pendingVertices);
+
+            if (count <= 0)
             {
-                FillColorPointBuffers(rawData, totalPoints, count, positionScale, _pendingVertices, _pendingColors);
-            }
-            else
-            {
-                FillPointBuffers(rawData, totalPoints, count, positionScale, _pendingVertices);
+                return;
             }
 
             lock (_bufferLock)
@@ -222,8 +270,11 @@ public class PointCloudStream : MonoBehaviour
         }
         finally
         {
+            pointFrame?.Dispose();
             pointCloudFrame?.Dispose();
             alignedFrameset?.Dispose();
+            depthFrame?.Dispose();
+            colorFrame?.Dispose();
             frameset.Dispose();
         }
     }
@@ -266,40 +317,68 @@ public class PointCloudStream : MonoBehaviour
         }
     }
 
-    private static void FillPointBuffers(byte[] data, int totalPoints, int sampleCount,
+    // 二维网格行列等步长采样，跳过无深度的无效点，返回实际写入的点数。
+    private static int FillPointBuffers(byte[] data, int width, int height, int stride,
         float positionScale, Vector3[] outVertices)
     {
         float meterScale = positionScale * 0.001f;
-        for (int i = 0; i < sampleCount; i++)
+        int capacity = outVertices.Length;
+        int count = 0;
+        for (int y = 0; y < height; y += stride)
         {
-            float t = sampleCount <= 1 ? 0f : (float)i / (sampleCount - 1);
-            int index = Mathf.Clamp(Mathf.RoundToInt(t * (totalPoints - 1)), 0, totalPoints - 1);
-            int offset = index * PointStructSize;
-            float x = BitConverter.ToSingle(data, offset);
-            float y = BitConverter.ToSingle(data, offset + 4);
-            float z = BitConverter.ToSingle(data, offset + 8);
-            outVertices[i] = new Vector3(x, y, z) * meterScale;
+            int rowOffset = y * width;
+            for (int x = 0; x < width; x += stride)
+            {
+                if (count >= capacity)
+                {
+                    return count;
+                }
+                int offset = (rowOffset + x) * PointStructSize;
+                float pz = BitConverter.ToSingle(data, offset + 8);
+                if (pz == 0f)
+                {
+                    continue;
+                }
+                float px = BitConverter.ToSingle(data, offset);
+                float py = BitConverter.ToSingle(data, offset + 4);
+                outVertices[count++] = new Vector3(px, py, pz) * meterScale;
+            }
         }
+        return count;
     }
 
-    private static void FillColorPointBuffers(byte[] data, int totalPoints, int sampleCount,
+    // 二维网格行列等步长采样（彩色点云），跳过无深度的无效点，返回实际写入的点数。
+    private static int FillColorPointBuffers(byte[] data, int width, int height, int stride,
         float positionScale, Vector3[] outVertices, Color[] outColors)
     {
         float meterScale = positionScale * 0.001f;
-        for (int i = 0; i < sampleCount; i++)
+        int capacity = outVertices.Length;
+        int count = 0;
+        for (int y = 0; y < height; y += stride)
         {
-            float t = sampleCount <= 1 ? 0f : (float)i / (sampleCount - 1);
-            int index = Mathf.Clamp(Mathf.RoundToInt(t * (totalPoints - 1)), 0, totalPoints - 1);
-            int offset = index * ColorPointStructSize;
-            float x = BitConverter.ToSingle(data, offset);
-            float y = BitConverter.ToSingle(data, offset + 4);
-            float z = BitConverter.ToSingle(data, offset + 8);
-            float r = BitConverter.ToSingle(data, offset + 12);
-            float g = BitConverter.ToSingle(data, offset + 16);
-            float b = BitConverter.ToSingle(data, offset + 20);
-            outVertices[i] = new Vector3(x, y, z) * meterScale;
-            outColors[i] = new Color(Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b), 1f);
+            int rowOffset = y * width;
+            for (int x = 0; x < width; x += stride)
+            {
+                if (count >= capacity)
+                {
+                    return count;
+                }
+                int offset = (rowOffset + x) * ColorPointStructSize;
+                float pz = BitConverter.ToSingle(data, offset + 8);
+                if (pz == 0f)
+                {
+                    continue;
+                }
+                float px = BitConverter.ToSingle(data, offset);
+                float py = BitConverter.ToSingle(data, offset + 4);
+                float r = BitConverter.ToSingle(data, offset + 12);
+                float g = BitConverter.ToSingle(data, offset + 16);
+                float b = BitConverter.ToSingle(data, offset + 20);
+                outVertices[count++] = new Vector3(px, py, pz) * meterScale;
+                outColors[count - 1] = new Color(Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b), 1f);
+            }
         }
+        return count;
     }
 
     private void ExtractColorFrame(ColorFrame colorFrame)

@@ -78,6 +78,22 @@ public class PointCloudStream : MonoBehaviour
     private int _pendingColorW, _pendingColorH;
     private bool _hasPendingColor;
 
+    // Orbbec 彩色相机出厂内参（标定阶段离线 solvePnP 用）。内参为常量，只需抓取一次。
+    private CameraIntrinsic _colorIntrinsic;
+    private bool _hasColorIntrinsic;
+
+    /// <summary>
+    /// 获取 Orbbec 彩色相机内参（与彩色图同分辨率）。pipeline 未出帧前返回 false。
+    /// </summary>
+    public bool TryGetColorIntrinsic(out CameraIntrinsic intrinsic)
+    {
+        lock (_bufferLock)
+        {
+            intrinsic = _colorIntrinsic;
+            return _hasColorIntrinsic;
+        }
+    }
+
     void Start()
     {
         pipeline.SetFramesetCallback(OnFrameset);
@@ -345,6 +361,8 @@ public class PointCloudStream : MonoBehaviour
 
     void Update()
     {
+        TryCaptureColorIntrinsic();
+
         Vector3[] vertices = null;
         Color[] colors = null;
         int count = 0;
@@ -504,6 +522,97 @@ public class PointCloudStream : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogWarning($"[PointCloudStream] 提取彩色帧失败: {e.Message}");
+        }
+    }
+
+    // 主线程惰性获取彩色相机内参。
+    // 必须走「从 color profile 列表匹配当前分辨率的 VideoStreamProfile → GetIntrinsic」这条路径：
+    //  - 不能用 Pipeline.GetCameraParam()：该设备的 .so 内部解引用空指针，直接 SIGSEGV；
+    //  - 不能从帧的 StreamProfile 走 As<>()+Dispose：会误删帧借用的 profile，回调线程下一帧崩溃。
+    // profile 列表里的 profile 是设备持久对象，As<>()+Dispose 安全（OrbbecPipeline 已在用同样写法）。
+    // 取不到也不致命：离线可用 calibrateCameraCharuco 从采集到的彩色图自标定内参。
+    private float _nextIntrinsicTryTime;
+    private void TryCaptureColorIntrinsic()
+    {
+        if (_hasColorIntrinsic || !pipelineReady || pipeline == null || pipeline.Pipeline == null)
+        {
+            return;
+        }
+
+        int targetW, targetH;
+        lock (_bufferLock)
+        {
+            targetW = _pendingColorW;
+            targetH = _pendingColorH;
+        }
+        // 等第一帧彩色图到达、知道实际分辨率后再匹配，确保内参与所存图像分辨率一致。
+        if (targetW <= 0 || targetH <= 0)
+        {
+            return;
+        }
+
+        // 失败按秒重试，避免每帧都打原生接口。
+        if (Time.unscaledTime < _nextIntrinsicTryTime)
+        {
+            return;
+        }
+        _nextIntrinsicTryTime = Time.unscaledTime + 1f;
+
+        StreamProfileList list = null;
+        try
+        {
+            list = pipeline.Pipeline.GetStreamProfileList(SensorType.OB_SENSOR_COLOR);
+            if (list == null)
+            {
+                return;
+            }
+
+            uint count = list.ProfileCount();
+            for (int i = 0; i < count; i++)
+            {
+                StreamProfile sp = null;
+                VideoStreamProfile vsp = null;
+                try
+                {
+                    sp = list.GetProfile(i);
+                    vsp = sp?.As<VideoStreamProfile>();
+                    if (vsp == null)
+                    {
+                        continue;
+                    }
+                    if (vsp.GetWidth() != targetW || vsp.GetHeight() != targetH)
+                    {
+                        continue;
+                    }
+
+                    CameraIntrinsic intr = vsp.GetIntrinsic();
+                    if (intr.width <= 0 || intr.height <= 0 || intr.fx <= 0f || intr.fy <= 0f)
+                    {
+                        continue;
+                    }
+
+                    lock (_bufferLock)
+                    {
+                        _colorIntrinsic = intr;
+                        _hasColorIntrinsic = true;
+                    }
+                    Debug.Log($"[PointCloudStream] Color intrinsic: fx={intr.fx:F2} fy={intr.fy:F2} cx={intr.cx:F2} cy={intr.cy:F2} {intr.width}x{intr.height}");
+                    break;
+                }
+                finally
+                {
+                    vsp?.Dispose();
+                    sp?.Dispose();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[PointCloudStream] 获取彩色内参失败: {e.Message}");
+        }
+        finally
+        {
+            list?.Dispose();
         }
     }
 

@@ -42,7 +42,7 @@ EditorBuildSettings:
     path: Assets/Orbbec/Scenes/PointcloudStream.unity
     guid: 0fd53dd61ff51c440a4fe0a22e645b27
   - enabled: 1
-    path: Assets/AR/AR.unity
+    path: Assets/AR/Calibrate.unity
     guid: ff9d1b8b0e9cf4c49b94c6600a9b74b8
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: e4a6fd1eb2a99414e8d009d855d248e1,

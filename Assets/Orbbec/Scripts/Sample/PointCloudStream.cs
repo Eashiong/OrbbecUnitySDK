@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using Orbbec;
 using OrbbecUnity;
 using UnityEngine;
@@ -13,16 +14,40 @@ public class PointCloudStream : MonoBehaviour
     public OrbbecPipeline pipeline;
 
     [Header("点云设置")]
-    [Tooltip("最大显示点数，过大会影响帧率")]
+    [Tooltip("最大显示点数")]
     public int maxPointCount = 50000;
 
     [Tooltip("是否使用颜色点云（需要深度与彩色对齐）")]
     public bool useColorPointCloud = true;
 
+    [Tooltip("彩色点云使用硬件 D2C 对齐（设备需支持）。开启可省去 CPU 软件对齐开销；若设备/档位不支持会自动回退到软件对齐。")]
+    public bool useHardwareD2CAlign = false;
+
     private PointCloudFilter filter;
     private AlignFilter alignFilter;
+    private bool _hwAlignActive;
     private Format pointFormat;
     private bool pipelineReady;
+
+    // 点云原始数据按 12B / 24B 紧凑排列，与下面结构体内存布局一致，可直接 reinterpret。
+    [StructLayout(LayoutKind.Sequential)]
+    private struct OBPoint
+    {
+        public float x;
+        public float y;
+        public float z;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct OBColorPoint
+    {
+        public float x;
+        public float y;
+        public float z;
+        public float r;
+        public float g;
+        public float b;
+    }
 
     private byte[] rawData;
 
@@ -100,10 +125,48 @@ public class PointCloudStream : MonoBehaviour
             // v2: PointCloudFilter reads intrinsics/extrinsics from frame StreamProfiles at runtime.
             filter = new PointCloudFilter();
             filter.SetCoordinateSystem(CoordinateSystemType.OB_LEFT_HAND_COORDINATE_SYSTEM);
-            alignFilter = new AlignFilter(StreamType.OB_STREAM_COLOR);
+
+            // 彩色点云需要深度对齐到彩色。两种方式：
+            // - 硬件 D2C：由设备输出已对齐的深度，主机几乎零开销（需设备支持）；
+            // - 软件对齐：用 AlignFilter 在 CPU 上对齐，开销较大。
+            _hwAlignActive = false;
+            if (useColorPointCloud && useHardwareD2CAlign)
+            {
+                try
+                {
+                    pipeline.Config.SetAlignMode(AlignMode.ALIGN_D2C_HW_MODE);
+                    _hwAlignActive = true;
+                    Debug.Log("[PointCloudStream] Using hardware D2C align");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogWarning($"[PointCloudStream] Enable HW D2C failed, fallback to software align: {e.Message}");
+                }
+            }
+
+            if (useColorPointCloud && !_hwAlignActive)
+            {
+                alignFilter = new AlignFilter(StreamType.OB_STREAM_COLOR);
+            }
 
             ApplyPointFormat();
-            pipeline.StartPipeline();
+
+            try
+            {
+                pipeline.StartPipeline();
+            }
+            catch (Exception startEx) when (_hwAlignActive)
+            {
+                // 硬件 D2C 在当前档位不被支持导致启动失败时，回退为软件对齐再启动一次。
+                Debug.LogWarning($"[PointCloudStream] Start with HW D2C failed, retry with software align: {startEx.Message}");
+                _hwAlignActive = false;
+                try { pipeline.Config.SetAlignMode(AlignMode.ALIGN_DISABLE); } catch { }
+                if (alignFilter == null)
+                {
+                    alignFilter = new AlignFilter(StreamType.OB_STREAM_COLOR);
+                }
+                pipeline.StartPipeline();
+            }
 
             pipelineReady = true;
             Debug.Log("[PointCloudStream] Pipeline ready");
@@ -179,7 +242,8 @@ public class PointCloudStream : MonoBehaviour
             }
 
             Frame filterInput = frameset;
-            if (useColorPointCloud)
+            // 硬件 D2C 时 frameset 已对齐，无需软件 AlignFilter。
+            if (useColorPointCloud && alignFilter != null)
             {
                 alignedFrameset = alignFilter.Process(frameset);
                 if (alignedFrameset != null)
@@ -318,10 +382,12 @@ public class PointCloudStream : MonoBehaviour
     }
 
     // 二维网格行列等步长采样，跳过无深度的无效点，返回实际写入的点数。
+    // 直接把字节缓冲 reinterpret 成结构体，避免逐字段 BitConverter（千万次带边界检查的调用）。
     private static int FillPointBuffers(byte[] data, int width, int height, int stride,
         float positionScale, Vector3[] outVertices)
     {
         float meterScale = positionScale * 0.001f;
+        ReadOnlySpan<OBPoint> points = MemoryMarshal.Cast<byte, OBPoint>(data);
         int capacity = outVertices.Length;
         int count = 0;
         for (int y = 0; y < height; y += stride)
@@ -333,15 +399,12 @@ public class PointCloudStream : MonoBehaviour
                 {
                     return count;
                 }
-                int offset = (rowOffset + x) * PointStructSize;
-                float pz = BitConverter.ToSingle(data, offset + 8);
-                if (pz == 0f)
+                OBPoint p = points[rowOffset + x];
+                if (p.z == 0f)
                 {
                     continue;
                 }
-                float px = BitConverter.ToSingle(data, offset);
-                float py = BitConverter.ToSingle(data, offset + 4);
-                outVertices[count++] = new Vector3(px, py, pz) * meterScale;
+                outVertices[count++] = new Vector3(p.x, p.y, p.z) * meterScale;
             }
         }
         return count;
@@ -352,6 +415,7 @@ public class PointCloudStream : MonoBehaviour
         float positionScale, Vector3[] outVertices, Color[] outColors)
     {
         float meterScale = positionScale * 0.001f;
+        ReadOnlySpan<OBColorPoint> points = MemoryMarshal.Cast<byte, OBColorPoint>(data);
         int capacity = outVertices.Length;
         int count = 0;
         for (int y = 0; y < height; y += stride)
@@ -363,19 +427,14 @@ public class PointCloudStream : MonoBehaviour
                 {
                     return count;
                 }
-                int offset = (rowOffset + x) * ColorPointStructSize;
-                float pz = BitConverter.ToSingle(data, offset + 8);
-                if (pz == 0f)
+                OBColorPoint p = points[rowOffset + x];
+                if (p.z == 0f)
                 {
                     continue;
                 }
-                float px = BitConverter.ToSingle(data, offset);
-                float py = BitConverter.ToSingle(data, offset + 4);
-                float r = BitConverter.ToSingle(data, offset + 12);
-                float g = BitConverter.ToSingle(data, offset + 16);
-                float b = BitConverter.ToSingle(data, offset + 20);
-                outVertices[count++] = new Vector3(px, py, pz) * meterScale;
-                outColors[count - 1] = new Color(Mathf.Clamp01(r), Mathf.Clamp01(g), Mathf.Clamp01(b), 1f);
+                outVertices[count] = new Vector3(p.x, p.y, p.z) * meterScale;
+                outColors[count] = new Color(Mathf.Clamp01(p.r), Mathf.Clamp01(p.g), Mathf.Clamp01(p.b), 1f);
+                count++;
             }
         }
         return count;

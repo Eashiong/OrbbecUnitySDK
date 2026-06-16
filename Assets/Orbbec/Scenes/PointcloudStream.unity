@@ -151,8 +151,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01012373b0f61c24f96be2070eea01aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointSize: 2
+  pointSize: 10
   pointCloudMaterial: {fileID: 2100000, guid: daae9569712f41f49a6704a5c9ca3181, type: 2}
+  boundsExtent: 25
   pointCloudStream: {fileID: 666562853}
 --- !u!23 &553007486
 MeshRenderer:
@@ -257,12 +258,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   orbbecDevice: {fileID: 666562852}
   orbbecProfiles:
-  - {fileID: 11400000, guid: 137086b49c27b55478e86b86ad009d97, type: 2}
-  - {fileID: 11400000, guid: 32ae73c98cd405a41a3ffaf1457fd618, type: 2}
   - {fileID: 11400000, guid: fc80d20eee56a234d84f8bef77eda731, type: 2}
-  - {fileID: 11400000, guid: 80f8b0d586bdeb64f88123b8dc1254ad, type: 2}
-  - {fileID: 11400000, guid: 8a809eeadc1a1924ca64fa6e2360d255, type: 2}
-  - {fileID: 11400000, guid: ea6a7a0a105000445ab4822ca176c2ea, type: 2}
+  - {fileID: 11400000, guid: 078b06e7750a82b47a5829a218cc50d3, type: 2}
   onPipelineInit:
     m_PersistentCalls:
       m_Calls: []
@@ -381,8 +378,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pipeline: {fileID: 666562845}
-  maxPointCount: 50000
+  maxPointCount: 100000
   useColorPointCloud: 1
+  useHardwareD2CAlign: 1
 --- !u!1 &1950988267
 GameObject:
   m_ObjectHideFlags: 0

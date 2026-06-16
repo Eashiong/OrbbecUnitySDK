@@ -1,3 +1,9 @@
+基于 Orbbec c++ sdk v2，将官方已经停止更新的v1.x的 OrbbecUnitySDK升级到v2，并：
+* 增加点云实时预览功能
+* 优化使支持200万个点云数据获取和10万个点云的实时渲染
+  
+下面是官方原README
+
 # 1. Overview
 
 This document provides an introduction to the Orbbec SDK Unity Wrapper. The Orbbec SDK Unity Wrapper is designed and encapsulated based on the Orbbec SDK. It mainly implements data stream reception, device command control, and D2C functionality. <br />To ensure that users can correctly and efficiently integrate the Orbbec SDK Unity Wrapper SDK into their projects and prevent other issues caused by improper API calls, this document is drafted to standardize API usage.

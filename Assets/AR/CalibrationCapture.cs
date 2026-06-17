@@ -98,6 +98,9 @@ public class CalibrationCapture : MonoBehaviour
     private Quaternion _lastCaptureRot;
     private bool _hasLastCapturePose;
 
+    // 采集中内参状态定时刷新（Orbbec 内参可能晚于首帧才就绪）
+    private float _nextIntrinsicsStatusRefreshTime;
+
     // ---------------- 生命周期 ----------------
 
     private void Awake()
@@ -155,7 +158,7 @@ public class CalibrationCapture : MonoBehaviour
         }
         else
         {
-            SetStatus("就绪。点击「开始采集」。");
+            SetStatus("就绪。点击「开始采集」。\n" + BuildIntrinsicsStatusBlock());
         }
         RefreshButtons();
     }
@@ -197,6 +200,12 @@ public class CalibrationCapture : MonoBehaviour
         if (!_isCapturing)
         {
             return;
+        }
+
+        if (Time.unscaledTime >= _nextIntrinsicsStatusRefreshTime)
+        {
+            _nextIntrinsicsStatusRefreshTime = Time.unscaledTime + 1f;
+            SetStatus($"采集中... 已采集 {_samples.Count} 组\n{BuildIntrinsicsStatusBlock()}");
         }
 
         if (Time.unscaledTime - _lastCaptureTime < minCaptureInterval)
@@ -251,14 +260,14 @@ public class CalibrationCapture : MonoBehaviour
         // 1) AR 内参
         if (!cameraManager.TryGetIntrinsics(out XRCameraIntrinsics arIntr))
         {
-            SetStatus($"采集中... 已采集 {_samples.Count} 组（等待 AR 内参，请确保已授权相机并初始化）");
+            SetStatus($"采集中... 已采集 {_samples.Count} 组\n{BuildIntrinsicsStatusBlock()}");
             return;
         }
 
         // 2) Orbbec 彩色图 + 内参
         if (!_hasOrbbecColor)
         {
-            SetStatus($"采集中... 已采集 {_samples.Count} 组（等待 Orbbec 彩色帧）");
+            SetStatus($"采集中... 已采集 {_samples.Count} 组（等待 Orbbec 彩色帧）\n{BuildIntrinsicsStatusBlock()}");
             return;
         }
         // Orbbec 彩色内参为「尽力获取」：取不到也不阻塞采集，离线可用 calibrateCameraCharuco
@@ -269,7 +278,7 @@ public class CalibrationCapture : MonoBehaviour
         byte[] phoneJpg = TryEncodePhoneImage(out int phoneW, out int phoneH);
         if (phoneJpg == null)
         {
-            SetStatus($"采集中... 已采集 {_samples.Count} 组（手机相机图获取失败，稍后重试）");
+            SetStatus($"采集中... 已采集 {_samples.Count} 组（手机相机图获取失败，稍后重试）\n{BuildIntrinsicsStatusBlock()}");
             return;
         }
 
@@ -277,7 +286,7 @@ public class CalibrationCapture : MonoBehaviour
         byte[] obJpg = EncodeTopLeftToJpg(_orbbecColor, _orbbecColorW, _orbbecColorH, 3, jpgQuality);
         if (obJpg == null)
         {
-            SetStatus($"采集中... 已采集 {_samples.Count} 组（Orbbec 图编码失败）");
+            SetStatus($"采集中... 已采集 {_samples.Count} 组（Orbbec 图编码失败）\n{BuildIntrinsicsStatusBlock()}");
             return;
         }
 
@@ -322,8 +331,7 @@ public class CalibrationCapture : MonoBehaviour
         _lastCaptureRot = rot;
         _hasLastCapturePose = true;
 
-        string intrTip = hasObIntr ? "" : "（Orbbec内参待离线标定）";
-        SetStatus($"采集中... 已采集 {_samples.Count} 组（手机 {phoneW}x{phoneH} / Orbbec {_orbbecColorW}x{_orbbecColorH}）{intrTip}。移动到新位姿继续。");
+        SetStatus($"采集中... 已采集 {_samples.Count} 组（手机 {phoneW}x{phoneH} / Orbbec {_orbbecColorW}x{_orbbecColorH}）。移动到新位姿继续。\n{BuildIntrinsicsStatusBlock()}");
     }
 
     // 采集手机相机 CPU 图并编码为「左上原点」的 JPG（与 AR 内参方向一致）
@@ -395,7 +403,7 @@ public class CalibrationCapture : MonoBehaviour
         _hasLastCapturePose = false;
         _lastCaptureTime = -999f;
         _isCapturing = true;
-        SetStatus("采集中... 已采集 0 组。保持设备静止对准标定板，缓慢更换距离/角度。");
+        SetStatus("采集中... 已采集 0 组。保持设备静止对准标定板，缓慢更换距离/角度。\n" + BuildIntrinsicsStatusBlock());
         RefreshButtons();
     }
 
@@ -610,6 +618,50 @@ public class CalibrationCapture : MonoBehaviour
             statusText.text = msg;
         }
         Debug.Log($"[CalibrationCapture] {msg}");
+    }
+
+    /// <summary>组装 AR + Orbbec 内参状态块：成功显示数值，失败显示原因。</summary>
+    private string BuildIntrinsicsStatusBlock()
+    {
+        return FormatArIntrinsicsStatus() + "\n" + FormatOrbbecIntrinsicsStatus();
+    }
+
+    private string FormatArIntrinsicsStatus()
+    {
+        if (cameraManager == null)
+        {
+            return "AR 内参：失败 — 未找到 ARCameraManager";
+        }
+
+        if (cameraManager.TryGetIntrinsics(out XRCameraIntrinsics arIntr))
+        {
+            return $"AR 内参：fx={arIntr.focalLength.x:F2} fy={arIntr.focalLength.y:F2} " +
+                   $"cx={arIntr.principalPoint.x:F2} cy={arIntr.principalPoint.y:F2} " +
+                   $"{arIntr.resolution.x}x{arIntr.resolution.y}";
+        }
+
+        return "AR 内参：失败 — AR 会话未就绪或相机未授权，请等待初始化完成";
+    }
+
+    private string FormatOrbbecIntrinsicsStatus()
+    {
+        if (pointCloudStream == null)
+        {
+            return "Orbbec 内参：失败 — 未找到 PointCloudStream";
+        }
+
+        if (pointCloudStream.TryGetColorIntrinsic(out CameraIntrinsic obIntr))
+        {
+            return $"Orbbec 内参：fx={obIntr.fx:F2} fy={obIntr.fy:F2} " +
+                   $"cx={obIntr.cx:F2} cy={obIntr.cy:F2} {obIntr.width}x{obIntr.height}";
+        }
+
+        if (!_hasOrbbecColor)
+        {
+            return "Orbbec 内参：失败 — 等待彩色帧以确定分辨率";
+        }
+
+        return "Orbbec 内参：失败 — profiles 与 camera_param 均未返回有效值（持续重试，可离线标定）";
     }
 
     // ---------------- 落盘数据模型 ----------------

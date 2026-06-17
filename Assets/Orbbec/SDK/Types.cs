@@ -307,6 +307,7 @@ namespace Orbbec
     * @brief 数据块结构体，用于数据分块传输
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DataChunk
     {
         public IntPtr data;    ///< \if English current block data pointer \else 当前块数据指针 \endif
@@ -322,6 +323,7 @@ namespace Orbbec
     * @brief 整形范围的结构体
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct IntPropertyRange
     {
         public Int32 cur;   ///< \if English current value \else 当前值 \endif
@@ -338,6 +340,7 @@ namespace Orbbec
     * @brief 浮点型范围的结构体
     * \endif
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct FloatPropertyRange
     {
         public float cur;   ///< \if English current value \else 当前值 \endif
@@ -350,6 +353,7 @@ namespace Orbbec
     /**
     * @brief Structure for float range
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct UInt16PropertyRange 
     {
         public ushort cur;   ///< Current value
@@ -362,6 +366,7 @@ namespace Orbbec
     /**
     * @brief Structure for float range
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct UInt8PropertyRange 
     {
         public byte cur;   ///< Current value
@@ -378,6 +383,7 @@ namespace Orbbec
      * @brief 布尔型范围的结构体
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BoolPropertyRange
     {
         [MarshalAs(UnmanagedType.I1)]
@@ -399,6 +405,7 @@ namespace Orbbec
      * @brief 相机内参
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CameraIntrinsic
     {
         public float fx;      ///< \if English focal length in x direction \else x方向焦距 \endif
@@ -412,6 +419,7 @@ namespace Orbbec
     /**
     * @brief Structure for accelerometer intrinsic parameters
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct AccelIntrinsic
     {
         public double noiseDensity;          ///< In-run bias instability
@@ -430,6 +438,7 @@ namespace Orbbec
     /**
     * @brief Structure for gyroscope intrinsic parameters
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GyroIntrinsic{
         public double noiseDensity;          ///< In-run bias instability
         public double randomWalk;            ///< random walk
@@ -449,6 +458,7 @@ namespace Orbbec
      * @brief 畸变参数
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CameraDistortion
     {
         public float k1;    ///< \if English Radial distortion factor 1 \else 径向畸变系数1 \endif
@@ -480,6 +490,7 @@ namespace Orbbec
      * @brief 旋转/变换矩阵
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct D2CTransform
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
@@ -488,6 +499,7 @@ namespace Orbbec
         public float[] trans;   ///< \if English transformation matrix \else 变化矩阵 \endif
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Extrinsic
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
@@ -503,6 +515,7 @@ namespace Orbbec
      * @brief 相机参数
      * \endif
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CameraParam
     {
         public CameraIntrinsic depthIntrinsic;   ///< \if English Depth camera internal parameters \else 深度相机内参 \endif    
@@ -510,12 +523,14 @@ namespace Orbbec
         public CameraDistortion depthDistortion;  ///< \if English Depth camera distortion parameters \else 深度相机畸变参数 \endif   
         public CameraDistortion rgbDistortion;    ///< \if English Color camera distortion parameters 1 \else 彩色相机畸变参数 \endif   
         public D2CTransform transform;        ///< \if English rotation/transformation matrix \else 旋转/变换矩阵 \endif   
+        [MarshalAs(UnmanagedType.I1)]
         public bool isMirrored;       ///< \if English Whether the image frame corresponding to this group of parameters is mirrored \else 本组参数对应的图像帧是否被镜像 \endif   
     }
 
     /**
     * @brief calibration parameters
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct CalibrationParam 
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 9)]
@@ -738,6 +753,7 @@ namespace Orbbec
     /**
      * @brief Data structures for accelerometers
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct AccelValue
     {
         public float x;  ///< X-direction component
@@ -748,6 +764,7 @@ namespace Orbbec
     /**
      * @brief Data structures for gyroscope
      */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct GyroValue
     {
         public float x;  ///< X-direction component
@@ -755,6 +772,7 @@ namespace Orbbec
         public float z;  ///< Z-direction component
     }
 
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct Float3D
     {
         public float x;  ///< X-direction component
@@ -1195,11 +1213,12 @@ namespace Orbbec
     * \endif
     *
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DepthWorkMode {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public byte[] checksum;  ///< \if English Checksum of work mode \else 相机深度模式对应哈希二进制数组 \endif
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-        public char[]    name;      ///< \if English Name of work mode \else 名称 \endif
+        public byte[]    name;      ///< \if English Name of work mode \else 名称 \endif
         public DepthWorkModeTag tag; ///< \if English Preset tag \else 预设标签 \endif
     }
 
@@ -1525,6 +1544,7 @@ namespace Orbbec
     /**
     * @brief The synchronization configuration of the device.
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct MultiDeviceSyncConfig{
         /**
         * @brief The sync mode of the device.
@@ -1564,6 +1584,7 @@ namespace Orbbec
         * @attention If device is in the @ref OB_MULTI_DEVICE_SYNC_MODE_FREE_RUN or @ref OB_MULTI_DEVICE_SYNC_MODE_STANDALONE mode, the trigger signal output is
         * always disabled. Set this parameter to true will not take effect.
         */
+        [MarshalAs(UnmanagedType.I1)]
         public bool triggerOutEnable;
 
         /**
@@ -1589,6 +1610,7 @@ namespace Orbbec
     * @brief The timestamp reset configuration of the device.
     *
     */
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct DeviceTimestampResetConfig{
         /**
         * @brief Whether to enable the timestamp reset function.
@@ -1598,6 +1620,7 @@ namespace Orbbec
         *
         * @attention For some models, the timestamp reset function is always enabled and cannot be disabled.
         */
+        [MarshalAs(UnmanagedType.I1)]
         public bool enable;
 
         /**
@@ -1610,6 +1633,7 @@ namespace Orbbec
         *
         * @attention For some models, the timestamp reset signal output is always enabled and cannot be disabled.
         */
+        [MarshalAs(UnmanagedType.I1)]
         public bool timestamp_reset_signal_output_enable;
     }
 

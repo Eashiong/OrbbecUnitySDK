@@ -525,22 +525,143 @@ public class PointCloudStream : MonoBehaviour
         }
     }
 
-    // 主线程惰性获取彩色相机内参。
-    // 必须走「从 color profile 列表匹配当前分辨率的 VideoStreamProfile → GetIntrinsic」这条路径：
-    //  - 不能用 Pipeline.GetCameraParam()：该设备的 .so 内部解引用空指针，直接 SIGSEGV；
-    //  - 不能从帧的 StreamProfile 走 As<>()+Dispose：会误删帧借用的 profile，回调线程下一帧崩溃。
-    // profile 列表里的 profile 是设备持久对象，As<>()+Dispose 安全（OrbbecPipeline 已在用同样写法）。
-    // 取不到也不致命：离线可用 calibrateCameraCharuco 从采集到的彩色图自标定内参。
+    // 主线程惰性获取彩色相机内参（成功一次后缓存）。
+    // 获取顺序：
+    // 1) color profile 列表按当前分辨率精确匹配；
+    // 2) profile 列表找任意有效内参并按当前分辨率缩放；
+    // 3) Pipeline.GetCameraParam().rgbIntrinsic 兜底并按分辨率缩放。
+    // 注意：不从回调帧的 StreamProfile 做 As<>()+Dispose，避免误释放帧借用对象导致后续崩溃。
     private float _nextIntrinsicTryTime;
+
+    private static bool IsValidIntrinsic(CameraIntrinsic intr)
+    {
+        return intr.fx > 0f && intr.fy > 0f && intr.width > 0 && intr.height > 0;
+    }
+
+    private static CameraIntrinsic ScaleIntrinsicToResolution(CameraIntrinsic src, int targetW, int targetH)
+    {
+        if (targetW <= 0 || targetH <= 0 || src.width <= 0 || src.height <= 0)
+        {
+            return src;
+        }
+
+        if (src.width == targetW && src.height == targetH)
+        {
+            return src;
+        }
+
+        float sx = (float)targetW / src.width;
+        float sy = (float)targetH / src.height;
+        src.fx *= sx;
+        src.fy *= sy;
+        src.cx *= sx;
+        src.cy *= sy;
+        src.width = (short)Mathf.Clamp(targetW, 1, short.MaxValue);
+        src.height = (short)Mathf.Clamp(targetH, 1, short.MaxValue);
+        return src;
+    }
+
+    private bool TryGetIntrinsicFromColorProfiles(int targetW, int targetH, out CameraIntrinsic intr)
+    {
+        intr = default;
+        StreamProfileList list = null;
+        try
+        {
+            list = pipeline.Pipeline.GetStreamProfileList(SensorType.OB_SENSOR_COLOR);
+            if (list == null)
+            {
+                return false;
+            }
+
+            CameraIntrinsic fallback = default;
+            bool hasFallback = false;
+            uint count = list.ProfileCount();
+            for (int i = 0; i < count; i++)
+            {
+                StreamProfile sp = null;
+                VideoStreamProfile vsp = null;
+                try
+                {
+                    sp = list.GetProfile(i);
+                    vsp = sp?.As<VideoStreamProfile>();
+                    if (vsp == null)
+                    {
+                        continue;
+                    }
+
+                    CameraIntrinsic cur = vsp.GetIntrinsic();
+                    if (!IsValidIntrinsic(cur))
+                    {
+                        continue;
+                    }
+
+                    if (vsp.GetWidth() == targetW && vsp.GetHeight() == targetH)
+                    {
+                        intr = cur;
+                        return true;
+                    }
+
+                    if (!hasFallback)
+                    {
+                        fallback = cur;
+                        hasFallback = true;
+                    }
+                }
+                finally
+                {
+                    vsp?.Dispose();
+                    sp?.Dispose();
+                }
+            }
+
+            if (hasFallback)
+            {
+                intr = ScaleIntrinsicToResolution(fallback, targetW, targetH);
+                return IsValidIntrinsic(intr);
+            }
+        }
+        finally
+        {
+            list?.Dispose();
+        }
+
+        return false;
+    }
+
+    private bool TryGetIntrinsicFromCameraParam(int targetW, int targetH, out CameraIntrinsic intr)
+    {
+        intr = default;
+        try
+        {
+            CameraParam cameraParam = pipeline.Pipeline.GetCameraParam();
+            CameraIntrinsic rgb = cameraParam.rgbIntrinsic;
+            if (!IsValidIntrinsic(rgb))
+            {
+                return false;
+            }
+
+            intr = ScaleIntrinsicToResolution(rgb, targetW, targetH);
+            return IsValidIntrinsic(intr);
+        }
+        catch (Exception e)
+        {
+            Debug.LogWarning($"[PointCloudStream] CameraParam 获取彩色内参失败: {e.Message}");
+            return false;
+        }
+    }
+
+    private void CacheColorIntrinsic(CameraIntrinsic intr, string sourceTag)
+    {
+        lock (_bufferLock)
+        {
+            _colorIntrinsic = intr;
+            _hasColorIntrinsic = true;
+        }
+        Debug.Log($"[PointCloudStream] Color intrinsic({sourceTag}): fx={intr.fx:F2} fy={intr.fy:F2} cx={intr.cx:F2} cy={intr.cy:F2} {intr.width}x{intr.height}");
+    }
+
     private void TryCaptureColorIntrinsic()
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        // 实测：该 Android 设备的 libOrbbecSDK.so 调用 ob_video_stream_profile_get_intrinsic /
-        // ob_pipeline_get_camera_param 都会 SIGSEGV（GetWidth/GetHeight 正常，仅取内参崩）。
-        // 这是原生库缺陷，C# 无法捕获原生段错误。Android 上一律跳过，改由离线
-        // calibrateCameraCharuco 从采集到的彩色图自标定 Orbbec 内参。
-        return;
-#else
         if (_hasColorIntrinsic || !pipelineReady || pipeline == null || pipeline.Pipeline == null)
         {
             return;
@@ -565,63 +686,26 @@ public class PointCloudStream : MonoBehaviour
         }
         _nextIntrinsicTryTime = Time.unscaledTime + 1f;
 
-        StreamProfileList list = null;
         try
         {
-            list = pipeline.Pipeline.GetStreamProfileList(SensorType.OB_SENSOR_COLOR);
-            if (list == null)
+            if (TryGetIntrinsicFromColorProfiles(targetW, targetH, out CameraIntrinsic fromProfiles))
             {
+                CacheColorIntrinsic(fromProfiles, "profiles");
                 return;
             }
 
-            uint count = list.ProfileCount();
-            for (int i = 0; i < count; i++)
+            if (TryGetIntrinsicFromCameraParam(targetW, targetH, out CameraIntrinsic fromCameraParam))
             {
-                StreamProfile sp = null;
-                VideoStreamProfile vsp = null;
-                try
-                {
-                    sp = list.GetProfile(i);
-                    vsp = sp?.As<VideoStreamProfile>();
-                    if (vsp == null)
-                    {
-                        continue;
-                    }
-                    if (vsp.GetWidth() != targetW || vsp.GetHeight() != targetH)
-                    {
-                        continue;
-                    }
-
-                    CameraIntrinsic intr = vsp.GetIntrinsic();
-                    if (intr.width <= 0 || intr.height <= 0 || intr.fx <= 0f || intr.fy <= 0f)
-                    {
-                        continue;
-                    }
-
-                    lock (_bufferLock)
-                    {
-                        _colorIntrinsic = intr;
-                        _hasColorIntrinsic = true;
-                    }
-                    Debug.Log($"[PointCloudStream] Color intrinsic: fx={intr.fx:F2} fy={intr.fy:F2} cx={intr.cx:F2} cy={intr.cy:F2} {intr.width}x{intr.height}");
-                    break;
-                }
-                finally
-                {
-                    vsp?.Dispose();
-                    sp?.Dispose();
-                }
+                CacheColorIntrinsic(fromCameraParam, "camera_param");
+                return;
             }
+
+            Debug.LogWarning("[PointCloudStream] 彩色内参尚未可用：profiles 与 camera_param 两条路径均未取到有效值，将继续重试。");
         }
         catch (Exception e)
         {
             Debug.LogWarning($"[PointCloudStream] 获取彩色内参失败: {e.Message}");
         }
-        finally
-        {
-            list?.Dispose();
-        }
-#endif
     }
 
     private static ConvertFormat? GetConvertFormat(Format fmt)

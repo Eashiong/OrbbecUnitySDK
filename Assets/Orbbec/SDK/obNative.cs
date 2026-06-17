@@ -3,19 +3,33 @@ using System.Runtime.InteropServices;
 
 namespace Orbbec
 {
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeDeviceChangedCallback(IntPtr removedPtr, IntPtr addedPtr, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeDeviceStateCallback(UInt64 state, String message, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeSetDataCallback(DataTranState state, uint percent, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeGetDataCallback(DataTranState state, DataChunk dataChunk, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeDeviceUpgradeCallback(UpgradeState state, String message, byte percent, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeSendFileCallback(FileTranState state, String message, byte percent, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeFilterCallback(IntPtr framePtr, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeFramesetCallback(IntPtr framesetPtr, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeFrameDestroyCallback(IntPtr bufferPtr, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativePlaybackCallback(IntPtr framePtr, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeMediaStateCallback(MediaState state, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeFrameCallback(IntPtr framePtr, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativeLogCallback(LogSeverity logSeverity, String message, IntPtr userData);
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     internal delegate void NativePlaybackStatusChangedCallback(PlaybackStatus status, IntPtr userData);
 
     internal class obNative
@@ -28,1505 +42,1505 @@ namespace Orbbec
 
         #region Context
         //ob_context *ob_create_context(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_context")]
+        [DllImport(obsdk, EntryPoint = "ob_create_context", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_context(ref IntPtr error);
 
         //ob_context *ob_create_context_with_config(const char *config_path, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_context_with_config")]
+        [DllImport(obsdk, EntryPoint = "ob_create_context_with_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_context_with_config(String configPath, ref IntPtr error);
 
         //void ob_delete_context(ob_context *context, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_context")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_context", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_context(IntPtr context, ref IntPtr error);
 
         //ob_device_list *ob_query_device_list(ob_context *context, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_query_device_list")]
+        [DllImport(obsdk, EntryPoint = "ob_query_device_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_query_device_list(IntPtr context, ref IntPtr error);
 
         //void ob_enable_net_device_enumeration(ob_context *context, bool enable, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_enable_net_device_enumeration")]
+        [DllImport(obsdk, EntryPoint = "ob_enable_net_device_enumeration", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_enable_net_device_enumeration(IntPtr context, bool enable, ref IntPtr error);
 
         //ob_device *ob_create_net_device(ob_context *context, const char *address, uint16_t port, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_net_device")]
+        [DllImport(obsdk, EntryPoint = "ob_create_net_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_net_device(IntPtr context, String address, UInt16 port, ref IntPtr error);
 
         //void ob_set_device_changed_callback(ob_context *context, ob_device_changed_callback callback, void *user_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_set_device_changed_callback")]
+        [DllImport(obsdk, EntryPoint = "ob_set_device_changed_callback", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_set_device_changed_callback(IntPtr context, [MarshalAs(UnmanagedType.FunctionPtr)] NativeDeviceChangedCallback callback, IntPtr userData, ref IntPtr error);
 
         //void ob_enable_device_clock_sync(ob_context *context, uint64_t repeatInterval, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_enable_device_clock_sync")]
+        [DllImport(obsdk, EntryPoint = "ob_enable_device_clock_sync", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_enable_device_clock_sync(IntPtr context, UInt64 repeatInterval, ref IntPtr error);
 
         //void ob_set_logger_severity(ob_log_severity severity, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_set_logger_severity")]
+        [DllImport(obsdk, EntryPoint = "ob_set_logger_severity", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_set_logger_severity(LogSeverity logSeverity, ref IntPtr error);
 
         //void ob_set_logger_to_file(ob_log_severity severity, const char *directory, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_set_logger_to_file")]
+        [DllImport(obsdk, EntryPoint = "ob_set_logger_to_file", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_set_logger_to_file(LogSeverity logSeverity, String directory, ref IntPtr error);
 
         //void ob_set_logger_to_console(ob_log_severity severity, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_set_logger_to_console")]
+        [DllImport(obsdk, EntryPoint = "ob_set_logger_to_console", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_set_logger_to_console(LogSeverity logSeverity, ref IntPtr error);
 
         //void ob_set_logger_to_callback(ob_log_severity severity, ob_log_callback callback, void *user_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_set_logger_to_callback")]
+        [DllImport(obsdk, EntryPoint = "ob_set_logger_to_callback", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_set_logger_to_callback(LogSeverity logSeverity, NativeLogCallback callback, IntPtr userData, ref IntPtr error);
 
         //void ob_set_extensions_directory(const char *directory, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_set_extensions_directory")]
+        [DllImport(obsdk, EntryPoint = "ob_set_extensions_directory", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_set_extensions_directory(String directory, ref IntPtr error);
         #endregion
 
         #region Device
         //uint32_t ob_device_list_get_count(ob_device_list *list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_device_list_get_count(IntPtr deviceList, ref IntPtr error);
 
         //const char *ob_device_list_get_device_name(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_name")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_name", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_name(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //int ob_device_list_get_device_pid(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_pid")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_pid", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_device_list_get_device_pid(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //int ob_device_list_get_device_vid(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_vid")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_vid", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_device_list_get_device_vid(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //const char *ob_device_list_get_device_uid(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_uid")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_uid", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_uid(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //const char *ob_device_list_get_device_serial_number(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_serial_number")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_serial_number", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_serial_number(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //const char *ob_device_list_get_device_connection_type(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_connection_type")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_connection_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_connection_type(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //const char *ob_device_list_get_device_ip_address(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_ip_address")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_ip_address", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_ip_address(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //const char *ob_device_list_get_device_local_mac(const ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_local_mac")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_local_mac", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_local_mac(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //const char *ob_device_info_get_extension_info(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_extension_info")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_extension_info", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_extension_info(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //ob_device *ob_device_list_get_device(ob_device_list *list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device(IntPtr deviceList, UInt32 index, ref IntPtr error);
 
         //ob_device *ob_device_list_get_device_by_serial_number(ob_device_list *list, const char *serial_number, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_by_serial_number")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_by_serial_number", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_by_serial_number(IntPtr deviceList, String serialNumber, ref IntPtr error);
 
         //ob_device *ob_device_list_get_device_by_uid(ob_device_list *list, const char *uid, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_by_uid")]
+        [DllImport(obsdk, EntryPoint = "ob_device_list_get_device_by_uid", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_list_get_device_by_uid(IntPtr deviceList, String uid, ref IntPtr error);
 
         //void ob_delete_device(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_device")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_device(IntPtr device, ref IntPtr error);
 
         //void ob_delete_device_info(ob_device_info *info, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_device_info")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_device_info", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_device_info(IntPtr deviceInfo, ref IntPtr error);
 
         //void ob_delete_device_list(ob_device_list *list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_device_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_device_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_device_list(IntPtr deviceList, ref IntPtr error);
 
         //ob_device_info *ob_device_get_device_info(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_device_info")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_device_info", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_device_info(IntPtr device, ref IntPtr error);
 
         //ob_sensor_list *ob_device_get_sensor_list(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_sensor_list")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_sensor_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_sensor_list(IntPtr device, ref IntPtr error);
 
         //ob_sensor *ob_device_get_sensor(ob_device *device, ob_sensor_type type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_sensor")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_sensor", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_sensor(IntPtr device, SensorType sensorType, ref IntPtr error);
 
         //void ob_device_set_int_property(ob_device *device, ob_property_id property_id, int32_t property, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_set_int_property")]
+        [DllImport(obsdk, EntryPoint = "ob_device_set_int_property", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_set_int_property(IntPtr device, PropertyId propertyId, Int32 property, ref IntPtr error);
 
         //int32_t ob_device_get_int_property(ob_device *device, ob_property_id property_id, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_int_property")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_int_property", CallingConvention = CallingConvention.Cdecl)]
         public static extern Int32 ob_device_get_int_property(IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //void ob_device_set_float_property(ob_device *device, ob_property_id property_id, float property, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_set_float_property")]
+        [DllImport(obsdk, EntryPoint = "ob_device_set_float_property", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_set_float_property(IntPtr device, PropertyId propertyId, float property, ref IntPtr error);
 
         //float ob_device_get_float_property(ob_device *device, ob_property_id property_id, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_float_property")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_float_property", CallingConvention = CallingConvention.Cdecl)]
         public static extern float ob_device_get_float_property(IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //void ob_device_set_bool_property(ob_device *device, ob_property_id property_id, bool property, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_set_bool_property")]
+        [DllImport(obsdk, EntryPoint = "ob_device_set_bool_property", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_set_bool_property(IntPtr device, PropertyId propertyId, bool property, ref IntPtr error);
 
         //bool ob_device_get_bool_property(ob_device *device, ob_property_id property_id, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_bool_property")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_bool_property", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_device_get_bool_property(IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //void ob_device_set_structured_data( ob_device* device, ob_global_unified_property property_id, const uint8_t *data, uint32_t data_size, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_set_structured_data")]
+        [DllImport(obsdk, EntryPoint = "ob_device_set_structured_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_set_structured_data(IntPtr device, PropertyId propertyId, IntPtr data, UInt32 dataSize, ref IntPtr error);
 
         //void ob_device_get_structured_data(ob_device *device, ob_property_id property_id, uint8_t *data, uint32_t *data_size, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_structured_data")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_structured_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_get_structured_data(IntPtr device, PropertyId propertyId, IntPtr data, ref UInt32 dataSize, ref IntPtr error);
 
         //uint32_t ob_device_get_supported_property_count(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_supported_property_count")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_supported_property_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_device_get_supported_property_count(IntPtr device, ref IntPtr error);
 
         //ob_property_item ob_device_get_supported_property_item(ob_device *device, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_supported_property_item")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_supported_property_item", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_get_supported_property_item(out PropertyItem item, IntPtr device, UInt32 index, ref IntPtr error);
 
         //bool ob_device_is_property_supported(ob_device *device, ob_property_id property_id, ob_permission_type permission, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_is_property_supported")]
+        [DllImport(obsdk, EntryPoint = "ob_device_is_property_supported", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_device_is_property_supported(IntPtr device, PropertyId propertyId, PermissionType permissionType, ref IntPtr error);
 
         //ob_int_property_range ob_device_get_int_property_range( ob_device* device, ob_property_id property_id, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_get_int_property_range")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_int_property_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_get_int_property_range(out IntPropertyRange range, IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //ob_float_property_range ob_device_get_float_property_range( ob_device* device, ob_property_id property_id, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_get_float_property_range")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_float_property_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_get_float_property_range(out FloatPropertyRange range, IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //ob_bool_property_range ob_device_get_bool_property_range( ob_device* device, ob_property_id property_id, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_get_bool_property_range")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_bool_property_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_get_bool_property_range(out BoolPropertyRange range, IntPtr device, PropertyId propertyId, ref IntPtr error);
 
         //void ob_device_update_firmware(ob_device *device, const char *path, ob_device_upgrade_callback callback, bool async, void *user_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_update_firmware")]
+        [DllImport(obsdk, EntryPoint = "ob_device_update_firmware", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_update_firmware(IntPtr device, String path, [MarshalAs(UnmanagedType.FunctionPtr)] NativeDeviceUpgradeCallback callback, bool async, IntPtr userData, ref IntPtr error);
 
         //void ob_device_update_firmware_from_data(ob_device *device, const char *file_data, uint32_t file_size, ob_device_upgrade_callback callback, bool async, void *user_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_update_firmware_from_data")]
+        [DllImport(obsdk, EntryPoint = "ob_device_update_firmware_from_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_update_firmware_from_data(IntPtr device, IntPtr fileData, UInt32 fileSize, [MarshalAs(UnmanagedType.FunctionPtr)] NativeDeviceUpgradeCallback callback, bool asycn, IntPtr userData, ref IntPtr error);
 
         //void ob_device_update_optional_depth_presets(ob_device *device, const char file_path_list[][OB_PATH_MAX], uint8_t path_count, ob_device_fw_update_callback callback, void* user_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_update_optional_depth_presets")]
+        [DllImport(obsdk, EntryPoint = "ob_device_update_optional_depth_presets", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_update_optional_depth_presets(IntPtr device, IntPtr filePathList, uint pathCount, [MarshalAs(UnmanagedType.FunctionPtr)] NativeDeviceUpgradeCallback callback, IntPtr userData, ref IntPtr error);
 
         //ob_device_state ob_device_get_device_state( ob_device* device, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_get_device_state")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_device_state", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_device_get_device_state(IntPtr device, ref IntPtr error);
 
         //void ob_device_set_state_changed_callback( ob_device* device, ob_device_state_callback callback, void* user_data, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_set_state_changed_callback")]
+        [DllImport(obsdk, EntryPoint = "ob_device_set_state_changed_callback", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_set_state_changed_callback(IntPtr device, [MarshalAs(UnmanagedType.FunctionPtr)] NativeDeviceStateCallback callback, IntPtr userData, ref IntPtr error);
 
         //void ob_device_enable_heartbeat(ob_device *device, bool enable, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_enable_heartbeat")]
+        [DllImport(obsdk, EntryPoint = "ob_device_enable_heartbeat", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_enable_heartbeat(IntPtr device, bool enable, ref IntPtr error);
 
         //void ob_device_send_and_receive_data(ob_device *device, const uint8_t *send_data, uint32_t send_data_size, uint8_t *receive_data, uint32_t* receive_data_size, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_send_and_receive_data")]
+        [DllImport(obsdk, EntryPoint = "ob_device_send_and_receive_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_send_and_receive_data(IntPtr device, IntPtr sendData, UInt32 sendDataSize, IntPtr receiveData, ref UInt32 receiveDataSize, ref IntPtr error);
 
         //ob_camera_param_list *ob_device_get_calibration_camera_param_list(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_calibration_camera_param_list")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_calibration_camera_param_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_calibration_camera_param_list(IntPtr device, ref IntPtr error);
 
         //void ob_device_reboot(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_reboot")]
+        [DllImport(obsdk, EntryPoint = "ob_device_reboot", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_reboot(IntPtr device, ref IntPtr error);
 
         //const char* ob_device_info_get_name( ob_device_info* info, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_name")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_name", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_name(IntPtr deviceInfo, ref IntPtr error);
 
         //int ob_device_info_get_pid( ob_device_info* info, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_pid")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_pid", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_device_info_get_pid(IntPtr deviceInfo, ref IntPtr error);
 
         //int ob_device_info_get_vid( ob_device_info* info, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_vid")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_vid", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_device_info_get_vid(IntPtr deviceInfo, ref IntPtr error);
 
         //const char* ob_device_info_get_uid( ob_device_info* info, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_uid")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_uid", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_uid(IntPtr deviceInfo, ref IntPtr error);
 
         //const char* ob_device_info_get_serial_number( ob_device_info* info, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_serial_number")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_serial_number", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_serial_number(IntPtr deviceInfo, ref IntPtr error);
 
         //const char* ob_device_info_get_firmware_version( ob_device_info* info, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_firmware_version")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_firmware_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_firmware_version(IntPtr deviceInfo, ref IntPtr error);
 
         //const char *ob_device_info_get_connection_type(ob_device_info *info, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_connection_type")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_connection_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_connection_type(IntPtr deviceInfo, ref IntPtr error);
 
         //const char *ob_device_info_get_ip_address(ob_device_info *info, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_ip_address")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_ip_address", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_ip_address(IntPtr deviceInfo, ref IntPtr error);
 
         //const char *ob_device_info_get_hardware_version(ob_device_info *info, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_hardware_version")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_hardware_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_hardware_version(IntPtr deviceInfo, ref IntPtr error);
 
         //bool ob_device_is_extension_info_exist(const ob_device *device, const char *info_key, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_is_extension_info_exist")]
+        [DllImport(obsdk, EntryPoint = "ob_device_is_extension_info_exist", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_device_is_extension_info_exist(IntPtr device, String infoKey, ref IntPtr error);
 
         //const char *ob_device_get_extension_info(const ob_device *device, const char *info_key, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_extension_info")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_extension_info", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_extension_info(IntPtr device, String infoKey, ref IntPtr error);
 
         //const char *ob_device_info_get_supported_min_sdk_version(ob_device_info *info, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_supported_min_sdk_version")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_supported_min_sdk_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_supported_min_sdk_version(IntPtr deviceInfo, ref IntPtr error);
 
         //const char *ob_device_info_get_asicName(ob_device_info *info, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_asicName")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_asicName", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_info_get_asicName(IntPtr deviceInfo, ref IntPtr error);
 
         //ob_device_type ob_device_info_get_device_type(ob_device_info *info, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_info_get_device_type")]
+        [DllImport(obsdk, EntryPoint = "ob_device_info_get_device_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern DeviceType ob_device_info_get_device_type(IntPtr deviceInfo, ref IntPtr error);
 
         //uint32_t ob_camera_param_list_get_count(ob_camera_param_list *param_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_camera_param_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_camera_param_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_camera_param_list_get_count(IntPtr paramList, ref IntPtr error);
 
         //ob_camera_param ob_camera_param_list_get_param(ob_camera_param_list *param_list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_camera_param_list_get_param")]
+        [DllImport(obsdk, EntryPoint = "ob_camera_param_list_get_param", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_camera_param_list_get_param(out CameraParam cameraParam, IntPtr paramList, UInt32 index, ref IntPtr error);
 
         //void ob_delete_camera_param_list(ob_camera_param_list *param_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_camera_param_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_camera_param_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_camera_param_list(IntPtr paramList, ref IntPtr error);
 
         //bool ob_device_is_global_timestamp_supported(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_is_global_timestamp_supported")]
+        [DllImport(obsdk, EntryPoint = "ob_device_is_global_timestamp_supported", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_device_is_global_timestamp_supported(IntPtr device, ref IntPtr error);
 
         //void ob_device_enable_global_timestamp(ob_device *device, bool enable, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_enable_global_timestamp")]
+        [DllImport(obsdk, EntryPoint = "ob_device_enable_global_timestamp", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_device_enable_global_timestamp(IntPtr device, bool enable, ref IntPtr error);
         #endregion
 
         #region Advanced
         //ob_depth_work_mode ob_device_get_current_depth_work_mode(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_get_current_depth_work_mode(out DepthWorkMode workMode, IntPtr device, ref IntPtr error);
 
         //const char *ob_device_get_current_depth_work_mode_name(const ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode_name")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_current_depth_work_mode_name", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_current_depth_work_mode_name(IntPtr device, ref IntPtr error);
 
         //ob_status ob_device_switch_depth_work_mode(ob_device *device, const ob_depth_work_mode *work_mode, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_switch_depth_work_mode")]
+        [DllImport(obsdk, EntryPoint = "ob_device_switch_depth_work_mode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_switch_depth_work_mode(IntPtr device, IntPtr workMode, ref IntPtr error);
 
         //ob_status ob_device_switch_depth_work_mode_by_name(ob_device *device, const char *mode_name, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_switch_depth_work_mode_by_name")]
+        [DllImport(obsdk, EntryPoint = "ob_device_switch_depth_work_mode_by_name", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_switch_depth_work_mode_by_name(IntPtr device, String modeName, ref IntPtr error);
 
         //ob_depth_work_mode_list *ob_device_get_depth_work_mode_list(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_depth_work_mode_list")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_depth_work_mode_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_depth_work_mode_list(IntPtr device, ref IntPtr error);
 
         //uint32_t ob_depth_work_mode_list_get_count(ob_depth_work_mode_list *work_mode_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_depth_work_mode_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_depth_work_mode_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_depth_work_mode_list_get_count(IntPtr workModeList, ref IntPtr error);
 
         //ob_depth_work_mode ob_depth_work_mode_list_get_item(ob_depth_work_mode_list *work_mode_list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_depth_work_mode_list_get_item")]
+        [DllImport(obsdk, EntryPoint = "ob_depth_work_mode_list_get_item", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_depth_work_mode_list_get_item(out DepthWorkMode workMode, IntPtr workModeList, UInt32 index, ref IntPtr error);
 
         //void ob_delete_depth_work_mode_list(ob_depth_work_mode_list *work_mode_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_depth_work_mode_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_depth_work_mode_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_depth_work_mode_list(IntPtr workModeList, ref IntPtr error);
 
         //const char *ob_device_get_current_preset_name(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_current_preset_name")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_current_preset_name", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_current_preset_name(IntPtr device, ref IntPtr error);
 
         //void ob_device_load_preset(ob_device *device, const char *preset_name, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_load_preset")]
+        [DllImport(obsdk, EntryPoint = "ob_device_load_preset", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_load_preset(IntPtr device, String presetName, ref IntPtr error);
 
         //void ob_device_load_preset_from_json_file(ob_device *device, const char *json_file_path, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_load_preset_from_json_file")]
+        [DllImport(obsdk, EntryPoint = "ob_device_load_preset_from_json_file", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_load_preset_from_json_file(IntPtr device, String jsonFilePath, ref IntPtr error);
 
         //void ob_device_load_preset_from_json_data(ob_device *device, const char *presetName, const uint8_t *data, uint32_t size, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_load_preset_from_json_data")]
+        [DllImport(obsdk, EntryPoint = "ob_device_load_preset_from_json_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_load_preset_from_json_data(IntPtr device, String presetName, IntPtr data, UInt32 size, ref IntPtr error);
 
         //void ob_device_export_current_settings_as_preset_json_file(ob_device *device, const char *json_file_path, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_export_current_settings_as_preset_json_file")]
+        [DllImport(obsdk, EntryPoint = "ob_device_export_current_settings_as_preset_json_file", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_export_current_settings_as_preset_json_file(IntPtr device, String jsonFilePath, ref IntPtr error);
 
         //void ob_device_export_current_settings_as_preset_json_data(ob_device *device, const char *presetName, const uint8_t **data, uint32_t *dataSize, ob_error** error);
-        [DllImport(obsdk, EntryPoint = "ob_device_export_current_settings_as_preset_json_data")]
+        [DllImport(obsdk, EntryPoint = "ob_device_export_current_settings_as_preset_json_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_export_current_settings_as_preset_json_data(IntPtr device, String presetName, IntPtr data, UInt32 size, ref IntPtr error);
 
         //ob_device_preset_list *ob_device_get_available_preset_list(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_available_preset_list")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_available_preset_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_get_available_preset_list(IntPtr device, ref IntPtr error);
 
         //void ob_delete_preset_list(ob_device_preset_list *preset_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_preset_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_preset_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_preset_list(IntPtr presetList, ref IntPtr error);
 
         //uint32_t ob_device_preset_list_get_count(ob_device_preset_list *preset_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_preset_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_device_preset_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_device_preset_list_get_count(IntPtr presetList, ref IntPtr error);
 
         //const char *ob_device_preset_list_get_name(ob_device_preset_list *preset_list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_preset_list_get_name")]
+        [DllImport(obsdk, EntryPoint = "ob_device_preset_list_get_name", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_device_preset_list_get_name(IntPtr presetList, UInt32 index, ref IntPtr error);
 
         //bool ob_device_preset_list_has_preset(ob_device_preset_list *preset_list, const char *preset_name, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_preset_list_has_preset")]
+        [DllImport(obsdk, EntryPoint = "ob_device_preset_list_has_preset", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_device_preset_list_has_preset(IntPtr presetList, String presetName, ref IntPtr error);
         #endregion
 
         #region MultipleDevice
         //uint16_t ob_device_get_supported_multi_device_sync_mode_bitmap(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_supported_multi_device_sync_mode_bitmap")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_supported_multi_device_sync_mode_bitmap", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt16 ob_device_get_supported_multi_device_sync_mode_bitmap(IntPtr device, ref IntPtr error);
         
         //void ob_device_set_multi_device_sync_config(ob_device *device, const ob_multi_device_sync_config *config, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_set_multi_device_sync_config")]
+        [DllImport(obsdk, EntryPoint = "ob_device_set_multi_device_sync_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_set_multi_device_sync_config(IntPtr device, IntPtr config, ref IntPtr error);
 
         //ob_multi_device_sync_config ob_device_get_multi_device_sync_config(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_multi_device_sync_config")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_multi_device_sync_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_get_multi_device_sync_config(out MultiDeviceSyncConfig config, IntPtr device, ref IntPtr error);
 
         //void ob_device_trigger_capture(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_trigger_capture")]
+        [DllImport(obsdk, EntryPoint = "ob_device_trigger_capture", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_trigger_capture(IntPtr device, ref IntPtr error);
 
         //void ob_device_set_timestamp_reset_config(ob_device *device, const ob_device_timestamp_reset_config *config, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_set_timestamp_reset_config")]
+        [DllImport(obsdk, EntryPoint = "ob_device_set_timestamp_reset_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_set_timestamp_reset_config(IntPtr device, IntPtr config, ref IntPtr error);
 
         //ob_device_timestamp_reset_config ob_device_get_timestamp_reset_config(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_get_timestamp_reset_config")]
+        [DllImport(obsdk, EntryPoint = "ob_device_get_timestamp_reset_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern DeviceTimestampResetConfig ob_device_get_timestamp_reset_config(IntPtr device, ref IntPtr error);
 
         //void ob_device_timestamp_reset(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_timestamp_reset")]
+        [DllImport(obsdk, EntryPoint = "ob_device_timestamp_reset", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_timestamp_reset(IntPtr device, ref IntPtr error);
 
         //void ob_device_timer_sync_with_host(ob_device *device, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_device_timer_sync_with_host")]
+        [DllImport(obsdk, EntryPoint = "ob_device_timer_sync_with_host", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_device_timer_sync_with_host(IntPtr device, ref IntPtr error);
         #endregion
 
         #region Error
         //ob_error *ob_create_error(ob_status status, const char *message, const char *function, const char *args, ob_exception_type exception_type);
-        [DllImport(obsdk, EntryPoint = "ob_create_error")]
+        [DllImport(obsdk, EntryPoint = "ob_create_error", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_error(Status status, String message, String function, String args, ExceptionType exceptionType);
 
         //ob_status ob_error_get_status(ob_error* error);
-        [DllImport(obsdk, EntryPoint = "ob_error_get_status")]
+        [DllImport(obsdk, EntryPoint = "ob_error_get_status", CallingConvention = CallingConvention.Cdecl)]
         public static extern Status ob_error_get_status(IntPtr error);
 
         //const char *ob_error_message(const ob_error *error);
-        [DllImport(obsdk, EntryPoint = "ob_error_get_message")]
+        [DllImport(obsdk, EntryPoint = "ob_error_get_message", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_error_get_message(IntPtr error);
 
         //const char* ob_error_get_function( ob_error* error );
-        [DllImport(obsdk, EntryPoint = "ob_error_get_function")]
+        [DllImport(obsdk, EntryPoint = "ob_error_get_function", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_error_get_function(IntPtr error);
 
         //const char* ob_error_get_args( ob_error* error );
-        [DllImport(obsdk, EntryPoint = "ob_error_get_args")]
+        [DllImport(obsdk, EntryPoint = "ob_error_get_args", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_error_get_args(IntPtr error);
 
         //ob_exception_type ob_error_get_exception_type( ob_error* error );
-        [DllImport(obsdk, EntryPoint = "ob_error_get_exception_type")]
+        [DllImport(obsdk, EntryPoint = "ob_error_get_exception_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern ExceptionType ob_error_get_exception_type(IntPtr error);
 
         //void ob_delete_error( ob_error* error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_error")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_error", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_error(IntPtr error);
         #endregion
 
         #region Filter
         //ob_filter *ob_create_filter(const char *name, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_filter(String name, ref IntPtr error);
 
         //const char *ob_filter_get_name(const ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_get_name")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_get_name", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_filter_get_name(IntPtr filter, ref IntPtr error);
 
         //const char* ob_filter_get_vendor_specific_code(const char* name, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_get_vendor_specific_code")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_get_vendor_specific_code", CallingConvention = CallingConvention.Cdecl)]
         public static extern String ob_filter_get_vendor_specific_code(String name, ref IntPtr error);
 
         //ob_filter *ob_create_private_filter(const char *name, const char *activation_key, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_private_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_private_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_private_filter(string name, string activationKey, ref IntPtr error);
 
         //const char *ob_filter_get_config_schema(const ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_get_config_schema")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_get_config_schema", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_filter_get_config_schema(IntPtr filter, ref IntPtr error);
 
         //ob_filter_config_schema_list *ob_filter_get_config_schema_list(const ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_get_config_schema_list")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_get_config_schema_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_filter_get_config_schema_list(IntPtr filter, ref IntPtr error);
 
         //uint32_t ob_filter_config_schema_list_get_count(const ob_filter_config_schema_list *config_schema_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_config_schema_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_config_schema_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_filter_config_schema_list_get_count(IntPtr filterConfigSchemaList, ref IntPtr error);
 
         //ob_filter_config_schema_item ob_filter_config_schema_list_get_item(const ob_filter_config_schema_list *config_schema_list, uint32_t index, ob_error** error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_config_schema_list_get_item")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_config_schema_list_get_item", CallingConvention = CallingConvention.Cdecl)]
         public static extern FilterConfigSchemaItem ob_filter_config_schema_list_get_item(IntPtr filterConfigSchemaList, uint index, ref IntPtr error);
 
         //void ob_delete_filter_config_schema_list(ob_filter_config_schema_list *config_schema_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_filter_config_schema_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_filter_config_schema_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_filter_config_schema_list(IntPtr filterConfigSchemaList, ref IntPtr error);
 
         //void ob_filter_update_config(ob_filter *filter, uint8_t argc, const char **argv, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_update_config")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_update_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_filter_update_config(IntPtr filter, UInt16 argc, String argv, ref IntPtr error);
 
         //void ob_filter_set_config_value(ob_filter *filter, const char *config_name, double value, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_set_config_value")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_set_config_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_filter_set_config_value(IntPtr filter, String configName, double value, ref IntPtr error);
 
         //double ob_filter_get_config_value(const ob_filter *filter, const char *config_name, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_get_config_value")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_get_config_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern double ob_filter_get_config_value(IntPtr filter, String configName, ref IntPtr error);
 
         //ob_filter *ob_create_pointcloud_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_pointcloud_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_pointcloud_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_pointcloud_filter(ref IntPtr error);
 
         //void ob_pointcloud_filter_set_camera_param(ob_filter *filter, ob_camera_param param, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_camera_param")]
+        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_camera_param", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pointcloud_filter_set_camera_param(IntPtr filter, CameraParam param, ref IntPtr error);
 
         //void ob_pointcloud_filter_set_point_format(ob_filter *filter, ob_format type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_point_format")]
+        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_point_format", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pointcloud_filter_set_point_format(IntPtr filter, Format format, ref IntPtr error);
 
         //void ob_pointcloud_filter_set_frame_align_state(ob_filter *filter, bool state, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_frame_align_state")]
+        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_frame_align_state", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pointcloud_filter_set_frame_align_state(IntPtr filter, bool state, ref IntPtr error);
 
         //void ob_pointcloud_filter_set_position_data_scale(ob_filter *filter, float scale, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_position_data_scale")]
+        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_position_data_scale", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pointcloud_filter_set_position_data_scale(IntPtr filter, float scale, ref IntPtr error);
 
         //void ob_pointcloud_filter_set_color_data_normalization(ob_filter *filter, bool state, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_color_data_normalization")]
+        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_color_data_normalization", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pointcloud_filter_set_color_data_normalization(IntPtr filter, bool state, ref IntPtr error);
 
         //void ob_pointcloud_filter_set_coordinate_system(ob_filter *filter, ob_coordinate_system_type type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_coordinate_system")]
+        [DllImport(obsdk, EntryPoint = "ob_pointcloud_filter_set_coordinate_system", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pointcloud_filter_set_coordinate_system(IntPtr filter, CoordinateSystemType type, ref IntPtr error);
 
         //ob_filter *ob_create_format_convert_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_format_convert_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_format_convert_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_format_convert_filter(ref IntPtr error);
 
         //void ob_format_convert_filter_set_format(ob_filter *filter, ob_convert_format type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_format_convert_filter_set_format")]
+        [DllImport(obsdk, EntryPoint = "ob_format_convert_filter_set_format", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_format_convert_filter_set_format(IntPtr filter, ConvertFormat format, ref IntPtr error);
 
         //ob_filter *ob_create_compression_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_compression_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_compression_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_compression_filter(ref IntPtr error);
 
         //void ob_compression_filter_set_compression_params(ob_filter *filter, ob_compression_mode mode, void *params, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_compression_filter_set_compression_params")]
+        [DllImport(obsdk, EntryPoint = "ob_compression_filter_set_compression_params", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_compression_filter_set_compression_params(IntPtr filter, CompressionMode mode, IntPtr param, ref IntPtr error);
 
         //ob_filter *ob_create_decompression_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_decompression_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_decompression_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_decompression_filter(ref IntPtr error);
 
         //ob_filter *ob_create_holefilling_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_holefilling_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_holefilling_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_holefilling_filter(ref IntPtr error);
 
         //void ob_holefilling_filter_set_mode(ob_filter *filter, ob_hole_filling_mode mode, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_holefilling_filter_set_mode")]
+        [DllImport(obsdk, EntryPoint = "ob_holefilling_filter_set_mode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_holefilling_filter_set_mode(IntPtr filter, HoleFillingMode mode, ref IntPtr error);
 
         //ob_hole_filling_mode ob_holefilling_filter_get_mode(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_holefilling_filter_get_mode")]
+        [DllImport(obsdk, EntryPoint = "ob_holefilling_filter_get_mode", CallingConvention = CallingConvention.Cdecl)]
         public static extern HoleFillingMode ob_holefilling_filter_get_mode(IntPtr filter, ref IntPtr error);
 
         //ob_filter *ob_create_temporal_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_temporal_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_temporal_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_temporal_filter(ref IntPtr error);
 
         //ob_float_property_range ob_temporal_filter_get_diffscale_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_get_diffscale_range")]
+        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_get_diffscale_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_temporal_filter_get_diffscale_range(out FloatPropertyRange range, IntPtr filter, ref IntPtr error);
 
         //void ob_temporal_filter_set_diffscale_value(ob_filter *filter, float value, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_set_diffscale_value")]
+        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_set_diffscale_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_temporal_filter_set_diffscale_value(IntPtr filter, float value, ref IntPtr error);
 
         //ob_float_property_range ob_temporal_filter_get_weight_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_get_weight_range")]
+        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_get_weight_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_temporal_filter_get_weight_range(out FloatPropertyRange range, IntPtr filter, ref IntPtr error);
 
         //void ob_temporal_filter_set_weight_value(ob_filter *filter, float value, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_set_weight_value")]
+        [DllImport(obsdk, EntryPoint = "ob_temporal_filter_set_weight_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_temporal_filter_set_weight_value(IntPtr filter, float value, ref IntPtr error);
 
         //ob_filter *ob_create_spatial_advanced_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_spatial_advanced_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_spatial_advanced_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_spatial_advanced_filter(ref IntPtr error);
 
         //ob_float_property_range ob_spatial_advanced_filter_get_alpha_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_alpha_range")]
+        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_alpha_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_spatial_advanced_filter_get_alpha_range(out FloatPropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_uint16_property_range ob_spatial_advanced_filter_get_disp_diff_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_disp_diff_range")]
+        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_disp_diff_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_spatial_advanced_filter_get_disp_diff_range(out UInt16PropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_uint16_property_range ob_spatial_advanced_filter_get_radius_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_radius_range")]
+        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_radius_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_spatial_advanced_filter_get_radius_range(out UInt16PropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_int_property_range ob_spatial_advanced_filter_get_magnitude_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_magnitude_range")]
+        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_magnitude_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_spatial_advanced_filter_get_magnitude_range(out IntPropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_spatial_advanced_filter_params ob_spatial_advanced_filter_get_filter_params(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_filter_params")]
+        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_get_filter_params", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_spatial_advanced_filter_get_filter_params(out SpatialAdvancedFilterParams filterParams, IntPtr filter, ref IntPtr error);
 
         //void ob_spatial_advanced_filter_set_filter_params(ob_filter *filter, ob_spatial_advanced_filter_params params, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_set_filter_params")]
+        [DllImport(obsdk, EntryPoint = "ob_spatial_advanced_filter_set_filter_params", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_spatial_advanced_filter_set_filter_params(IntPtr filter, SpatialAdvancedFilterParams filterParams, ref IntPtr error);
 
         //ob_filter *ob_create_noise_removal_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_noise_removal_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_noise_removal_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_noise_removal_filter(ref IntPtr error);
 
         //ob_uint16_property_range ob_noise_removal_filter_get_disp_diff_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_get_disp_diff_range")]
+        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_get_disp_diff_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_noise_removal_filter_get_disp_diff_range(out UInt16PropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_int_property_range ob_noise_removal_filter_get_max_size_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_get_max_size_range")]
+        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_get_max_size_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_noise_removal_filter_get_max_size_range(out IntPropertyRange range, IntPtr filter, ref IntPtr error);
 
         //void ob_noise_removal_filter_set_filter_params(ob_filter *filter, ob_noise_removal_filter_params params, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_set_filter_params")]
+        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_set_filter_params", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_noise_removal_filter_set_filter_params(IntPtr filter, NoiseRemovalFilterParams filterParams, ref IntPtr error);
 
         //ob_noise_removal_filter_params ob_noise_removal_filter_get_filter_params(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_get_filter_params")]
+        [DllImport(obsdk, EntryPoint = "ob_noise_removal_filter_get_filter_params", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_noise_removal_filter_get_filter_params(out NoiseRemovalFilterParams filterParams, IntPtr filter, ref IntPtr error);
 
         //ob_filter *ob_create_edge_noise_removal_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_edge_noise_removal_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_edge_noise_removal_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_edge_noise_removal_filter(ref IntPtr error);
 
         //void ob_edge_noise_removal_filter_set_filter_params(ob_filter *filter, ob_edge_noise_removal_filter_params params, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_set_filter_params")]
+        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_set_filter_params", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_edge_noise_removal_filter_set_filter_params(IntPtr filter, EdgeNoiseRemovalFilterParams filterParams, ref IntPtr error);
 
         //ob_edge_noise_removal_filter_params ob_edge_noise_removal_filter_get_filter_params(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_filter_params")]
+        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_filter_params", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_edge_noise_removal_filter_get_filter_params(out EdgeNoiseRemovalFilterParams filterParams, IntPtr filter, ref IntPtr error);
 
         //ob_uint16_property_range ob_edge_noise_removal_filter_get_margin_left_th_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_left_th_range")]
+        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_left_th_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_edge_noise_removal_filter_get_margin_left_th_range(out UInt16PropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_uint16_property_range ob_edge_noise_removal_filter_get_margin_right_th_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_right_th_range")]
+        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_right_th_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_edge_noise_removal_filter_get_margin_right_th_range(out UInt16PropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_uint16_property_range ob_edge_noise_removal_filter_get_margin_top_th_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_top_th_range")]
+        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_top_th_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_edge_noise_removal_filter_get_margin_top_th_range(out UInt16PropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_uint16_property_range ob_edge_noise_removal_filter_get_margin_bottom_th_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_bottom_th_range")]
+        [DllImport(obsdk, EntryPoint = "ob_edge_noise_removal_filter_get_margin_bottom_th_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_edge_noise_removal_filter_get_margin_bottom_th_range(out UInt16PropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_filter *ob_create_decimation_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_decimation_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_decimation_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_decimation_filter(ref IntPtr error);
 
         //ob_uint8_property_range ob_decimation_filter_get_scale_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_decimation_filter_get_scale_range")]
+        [DllImport(obsdk, EntryPoint = "ob_decimation_filter_get_scale_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt8PropertyRange ob_decimation_filter_get_scale_range(IntPtr filter, ref IntPtr error);
 
         //void ob_decimation_filter_set_scale_value(ob_filter *filter, uint8_t value, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_decimation_filter_set_scale_value")]
+        [DllImport(obsdk, EntryPoint = "ob_decimation_filter_set_scale_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_decimation_filter_set_scale_value(IntPtr filter, byte value, ref IntPtr error);
 
         //uint8_t ob_decimation_filter_get_scale_value(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_decimation_filter_get_scale_value")]
+        [DllImport(obsdk, EntryPoint = "ob_decimation_filter_get_scale_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern byte ob_decimation_filter_get_scale_value(IntPtr filter, ref IntPtr error);
 
         //ob_filter *ob_create_threshold_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_threshold_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_threshold_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_threshold_filter(ref IntPtr error);
 
         //ob_int_property_range ob_threshold_filter_get_min_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_threshold_filter_get_min_range")]
+        [DllImport(obsdk, EntryPoint = "ob_threshold_filter_get_min_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_threshold_filter_get_min_range(out IntPropertyRange range, IntPtr filter, ref IntPtr error);
 
         //ob_int_property_range ob_threshold_filter_get_max_range(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_threshold_filter_get_max_range")]
+        [DllImport(obsdk, EntryPoint = "ob_threshold_filter_get_max_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_threshold_filter_get_max_range(out IntPropertyRange range, IntPtr filter, ref IntPtr error);
 
         //bool ob_threshold_filter_set_scale_value(ob_filter *filter, uint16_t min, uint16_t max, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_threshold_filter_set_scale_value")]
+        [DllImport(obsdk, EntryPoint = "ob_threshold_filter_set_scale_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_threshold_filter_set_scale_value(IntPtr filter, UInt16 min, UInt16 max, ref IntPtr error);
 
         //ob_filter *ob_create_sequenceId_filter(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_sequenceId_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_create_sequenceId_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_sequenceId_filter(ref IntPtr error);
 
         //void ob_sequence_id_filter_select_sequence_id(ob_filter *filter, int sequence_id, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_select_sequence_id")]
+        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_select_sequence_id", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_sequence_id_filter_select_sequence_id(IntPtr filter, int sequence_id, ref IntPtr error);
 
         //int ob_sequence_id_filter_get_sequence_id(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_get_sequence_id")]
+        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_get_sequence_id", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_sequence_id_filter_get_sequence_id(IntPtr filter, ref IntPtr error);
 
         //ob_sequence_id_item *ob_sequence_id_filter_get_sequence_id_list(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_get_sequence_id_list")]
+        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_get_sequence_id_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_sequence_id_filter_get_sequence_id_list(IntPtr filter, ref IntPtr error);
 
         //int ob_sequence_id_filter_get_sequence_id_list_size(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_get_sequence_id_list_size")]
+        [DllImport(obsdk, EntryPoint = "ob_sequence_id_filter_get_sequence_id_list_size", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_sequence_id_filter_get_sequence_id_list_size(IntPtr filter, ref IntPtr error);
 
         //ob_filter *ob_create_hdr_merge(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_hdr_merge")]
+        [DllImport(obsdk, EntryPoint = "ob_create_hdr_merge", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_hdr_merge(ref IntPtr error);
         
         //ob_filter *ob_create_align(ob_error **error, ob_stream_type align_to_stream);
-        [DllImport(obsdk, EntryPoint = "ob_create_align")]
+        [DllImport(obsdk, EntryPoint = "ob_create_align", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_align(ref IntPtr error, StreamType alignToStream);
 
         //ob_stream_type ob_align_get_to_stream_type(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_align_get_to_stream_type")]
+        [DllImport(obsdk, EntryPoint = "ob_align_get_to_stream_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern StreamType ob_align_get_to_stream_type(IntPtr filter, ref IntPtr error);
 
         //ob_filter *ob_create_disparity_transform(ob_error **error, bool depth_to_disparity);
-        [DllImport(obsdk, EntryPoint = "ob_create_disparity_transform")]
+        [DllImport(obsdk, EntryPoint = "ob_create_disparity_transform", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_disparity_transform(ref IntPtr error, bool depth_to_disparity);
 
         //void ob_filter_reset( ob_filter* filter, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_filter_reset")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_reset", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_filter_reset(IntPtr filter, ref IntPtr error);
 
         //ob_frame* ob_filter_process( ob_filter* filter, ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_filter_process")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_process", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_filter_process(IntPtr filter, IntPtr frame, ref IntPtr error);
 
         //void ob_filter_enable(ob_filter *filter, bool enable, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_enable")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_enable", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_filter_enable(IntPtr filter, bool enable, ref IntPtr error);
 
         //bool ob_filter_is_enabled(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_is_enabled")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_is_enabled", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_filter_is_enabled(IntPtr filter, ref IntPtr error);
 
         //void ob_filter_set_callback( ob_filter* filter, ob_filter_callback callback, void* user_data, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_filter_set_callback")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_set_callback", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_filter_set_callback(IntPtr filter, [MarshalAs(UnmanagedType.FunctionPtr)] NativeFilterCallback callback, IntPtr userData, ref IntPtr error);
 
         //void ob_filter_push_frame( ob_filter* filter, ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_filter_push_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_push_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_filter_push_frame(IntPtr filter, IntPtr frame, ref IntPtr error);
 
         //void ob_delete_filter(ob_filter *filter, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_filter(IntPtr filter, ref IntPtr error);
 
         //uint32_t ob_filter_list_get_count(ob_filter_list *filter_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_filter_list_get_count(IntPtr filterList, ref IntPtr error);
 
         //ob_filter *ob_filter_list_get_filter(ob_filter_list *filter_list, uint32_t index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_filter_list_get_filter")]
+        [DllImport(obsdk, EntryPoint = "ob_filter_list_get_filter", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_filter_list_get_filter(IntPtr filterList, UInt32 index, ref IntPtr error);
 
         //void ob_delete_filter_list(ob_filter_list *filter_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_filter_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_filter_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_filter_list(IntPtr filterList, ref IntPtr error);
         #endregion
 
         #region Frame
         //uint64_t ob_frame_get_index( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_index")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_index", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_frame_get_index(IntPtr frame, ref IntPtr error);
 
         //ob_format ob_frame_get_format( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_format")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_format", CallingConvention = CallingConvention.Cdecl)]
         public static extern Format ob_frame_get_format(IntPtr frame, ref IntPtr error);
 
         //ob_frame_type ob_frame_get_type( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_type")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern FrameType ob_frame_get_type(IntPtr frame, ref IntPtr error);
 
         //uint64_t ob_frame_get_timestamp_us( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_frame_time_stamp(IntPtr frame, ref IntPtr error);
 
         //uint64_t ob_frame_get_timestamp_us(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_frame_get_timestamp_us(IntPtr frame, ref IntPtr error);
 
         //uint64_t ob_frame_get_system_timestamp_us( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_system_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_system_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_frame_system_time_stamp(IntPtr frame, ref IntPtr error);
 
         //uint64_t ob_frame_get_system_timestamp_us(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_system_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_system_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_frame_get_system_timestamp_us(IntPtr frame, ref IntPtr error);
 
         //uint64_t ob_frame_get_global_timestamp_us(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_global_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_global_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_frame_get_global_timestamp_us(IntPtr frame, ref IntPtr error);
 
         //void* ob_frame_get_data( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_data")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frame_get_data(IntPtr frame, ref IntPtr error);
 
         //uint32_t ob_frame_get_data_size( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_data_size")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_data_size", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_frame_get_data_size(IntPtr frame, ref IntPtr error);
 
         //void *ob_frame_get_metadata(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_metadata")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_metadata", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frame_get_metadata(IntPtr frame, ref IntPtr error);
 
         //uint32_t ob_frame_get_metadata_size(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_metadata_size")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_metadata_size", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_frame_get_metadata_size(IntPtr frame, ref IntPtr error);
 
         //bool ob_frame_has_metadata(ob_frame *frame, ob_frame_metadata_type type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_has_metadata")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_has_metadata", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_frame_has_metadata(IntPtr frame, uint type, ref IntPtr error);
 
         //int64_t ob_frame_get_metadata_value(ob_frame *frame, ob_frame_metadata_type type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_metadata_value")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_metadata_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern Int64 ob_frame_get_metadata_value(IntPtr frame, uint type, ref IntPtr error);
 
         //ob_stream_profile* ob_frame_get_stream_profile(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frame_get_stream_profile(IntPtr frame, ref IntPtr error);
 
         //ob_sensor* ob_frame_get_sensor(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_sensor")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_sensor", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frame_get_sensor(IntPtr frame, ref IntPtr error);
 
         //ob_device* ob_frame_get_device(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_get_device")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_get_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frame_get_device(IntPtr frame, ref IntPtr error);
 
         //uint32_t ob_video_frame_get_width( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_width")]
+        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_width", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_video_frame_get_width(IntPtr frame, ref IntPtr error);
 
         //uint32_t ob_video_frame_get_height( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_height")]
+        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_height", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_video_frame_get_height(IntPtr frame, ref IntPtr error);
 
         //uint8_t ob_video_frame_get_pixel_available_bit_size(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_pixel_available_bit_size")]
+        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_pixel_available_bit_size", CallingConvention = CallingConvention.Cdecl)]
         public static extern byte ob_video_frame_get_pixel_available_bit_size(IntPtr frame, ref IntPtr error);
 
         //ob_sensor_type ob_ir_frame_get_source_sensor_type(ob_frame *frame, ob_error **ob_error);
-        [DllImport(obsdk, EntryPoint = "ob_ir_frame_get_source_sensor_type")]
+        [DllImport(obsdk, EntryPoint = "ob_ir_frame_get_source_sensor_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern SensorType ob_ir_frame_get_source_sensor_type(IntPtr frame, ref IntPtr error);
 
         //float ob_depth_frame_get_value_scale( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_depth_frame_get_value_scale")]
+        [DllImport(obsdk, EntryPoint = "ob_depth_frame_get_value_scale", CallingConvention = CallingConvention.Cdecl)]
         public static extern float ob_depth_frame_get_value_scale(IntPtr frame, ref IntPtr error);
 
         //float ob_points_frame_get_coordinate_value_scale(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_points_frame_get_coordinate_value_scale")]
+        [DllImport(obsdk, EntryPoint = "ob_points_frame_get_coordinate_value_scale", CallingConvention = CallingConvention.Cdecl)]
         public static extern float ob_points_frame_get_coordinate_value_scale(IntPtr frame, ref IntPtr error);
 
         //void ob_delete_frame( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_frame(IntPtr frame, ref IntPtr error);
 
         //uint32_t ob_frameset_get_count( ob_frame* frameset, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frameset_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_frameset_get_count(IntPtr frameset, ref IntPtr error);
 
         //ob_frame* ob_frameset_get_depth_frame( ob_frame* frame_set, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frameset_get_depth_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_get_depth_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frameset_get_depth_frame(IntPtr frameset, ref IntPtr error);
 
         //ob_frame* ob_frameset_get_color_frame( ob_frame* frame_set, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frameset_get_color_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_get_color_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frameset_get_color_frame(IntPtr frameset, ref IntPtr error);
 
         //ob_frame* ob_frameset_get_ir_frame( ob_frame* frame_set, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frameset_get_ir_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_get_ir_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frameset_get_ir_frame(IntPtr frameset, ref IntPtr error);
 
         //ob_frame* ob_frameset_get_points_frame( ob_frame* frame_set, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_frameset_get_points_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_get_points_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frameset_get_points_frame(IntPtr frameset, ref IntPtr error);
 
         //ob_frame *ob_frameset_get_frame(ob_frame *frameset, ob_frame_type frame_type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frameset_get_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_get_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frameset_get_frame(IntPtr frameset, FrameType frameType, ref IntPtr error);
 
         //ob_frame *ob_frameset_get_frame_by_index(ob_frame *frameset, int index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frameset_get_frame_by_index")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_get_frame_by_index", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frameset_get_frame_by_index(IntPtr frameset, int index, ref IntPtr error);
 
         //ob_accel_value ob_accel_frame_get_value( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_accel_frame_get_value")]
+        [DllImport(obsdk, EntryPoint = "ob_accel_frame_get_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_accel_frame_get_value(out AccelValue accelValue, IntPtr frame, ref IntPtr error);
 
         //float ob_accel_frame_get_temperature( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_accel_frame_get_temperature")]
+        [DllImport(obsdk, EntryPoint = "ob_accel_frame_get_temperature", CallingConvention = CallingConvention.Cdecl)]
         public static extern float ob_accel_frame_get_temperature(IntPtr frame, ref IntPtr error);
 
         //ob_gyro_value ob_gyro_frame_get_value( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_gyro_frame_get_value")]
+        [DllImport(obsdk, EntryPoint = "ob_gyro_frame_get_value", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_gyro_frame_get_value(out GyroValue gyroValue, IntPtr frame, ref IntPtr error);
 
         //float ob_gyro_frame_get_temperature( ob_frame* frame, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_gyro_frame_get_temperature")]
+        [DllImport(obsdk, EntryPoint = "ob_gyro_frame_get_temperature", CallingConvention = CallingConvention.Cdecl)]
         public static extern float ob_gyro_frame_get_temperature(IntPtr frame, ref IntPtr error);
 
         //void ob_frame_add_ref(ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_add_ref")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_add_ref", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_add_ref(IntPtr frame, ref IntPtr error);
 
         //ob_frame *ob_create_frame(ob_frame_type frame_type, ob_format format, uint32_t data_size, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_create_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_frame(FrameType frameType, Format format, UInt32 dataSize, ref IntPtr error);
 
         //ob_frame *ob_create_frame_from_other_frame(const ob_frame *other_frame, bool should_copy_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_frame_from_other_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_create_frame_from_other_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_frame_from_other_frame(IntPtr otherFrame, bool shouldCopyData, ref IntPtr error);
 
         //ob_frame *ob_create_frame_from_stream_profile(const ob_stream_profile *stream_profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_frame_from_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_create_frame_from_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_frame_from_stream_profile(IntPtr profile, ref IntPtr error);
 
         //ob_frame *ob_create_video_frame(ob_frame_type frame_type, ob_format format, uint32_t width, uint32_t height, uint32_t stride_bytes, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_video_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_create_video_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_video_frame(FrameType frameType, Format format, UInt32 width, UInt32 height, UInt32 strideBytes, ref IntPtr error);
 
         //ob_frame *ob_create_frame_from_buffer(ob_frame_type frame_type, ob_format format, uint8_t *buffer, uint32_t buffer_size, ob_frame_destroy_callback* buffer_destroy_cb, void* buffer_destroy_context, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_frame_from_buffer")]
+        [DllImport(obsdk, EntryPoint = "ob_create_frame_from_buffer", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_frame_from_buffer(FrameType frameType, Format format, IntPtr buffer, UInt32 bufferSize, NativeFrameDestroyCallback callback, IntPtr userData, ref IntPtr error);
 
         //ob_frame *ob_create_video_frame_from_buffer(ob_frame_type frame_type, ob_format format, uint32_t width, uint32_t height, uint32_t stride_bytes, uint8_t* buffer, uint32_t buffer_size, ob_frame_destroy_callback* buffer_destroy_cb, void* buffer_destroy_context, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_video_frame_from_buffer")]
+        [DllImport(obsdk, EntryPoint = "ob_create_video_frame_from_buffer", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_video_frame_from_buffer(FrameType frameType, Format format, UInt32 width, UInt32 height, UInt32 strideBytes, IntPtr buffer, UInt32 bufferSize, NativeFrameDestroyCallback callback, IntPtr userData, ref IntPtr error);
 
         //void ob_frame_copy_info(const ob_frame *src_frame, ob_frame *dst_frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_copy_info")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_copy_info", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_copy_info(IntPtr srcFrame, IntPtr dstFrame, ref IntPtr error);
 
         //void ob_frame_update_data(ob_frame *frame, const uint8_t *data, uint32_t data_size, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_update_data")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_update_data", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_update_data(IntPtr frame, IntPtr data, UInt32 dataSize, ref IntPtr error);
 
         //void ob_frame_update_metadata(ob_frame *frame, const uint8_t *metadata, uint32_t metadata_size, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_update_metadata")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_update_metadata", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_update_metadata(IntPtr frame, IntPtr metadata, UInt32 metaDataSize, ref IntPtr error);
 
         //void ob_frame_set_stream_profile(ob_frame *frame, const ob_stream_profile *stream_profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_set_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_set_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_set_stream_profile(IntPtr frame, IntPtr profile, ref IntPtr error);
 
         //ob_pixel_type ob_video_frame_get_pixel_type(const ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_pixel_type")]
+        [DllImport(obsdk, EntryPoint = "ob_video_frame_get_pixel_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern PixelType ob_video_frame_get_pixel_type(IntPtr frame, ref IntPtr error);
 
         //void ob_video_frame_set_pixel_type(ob_frame *frame, ob_pixel_type pixel_type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_frame_set_pixel_type")]
+        [DllImport(obsdk, EntryPoint = "ob_video_frame_set_pixel_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_frame_set_pixel_type(IntPtr frame, PixelType pixelType, ref IntPtr error);
 
         //void ob_video_frame_set_pixel_available_bit_size(ob_frame *frame, uint8_t bit_size, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_frame_set_pixel_available_bit_size")]
+        [DllImport(obsdk, EntryPoint = "ob_video_frame_set_pixel_available_bit_size", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_frame_set_pixel_available_bit_size(IntPtr frame, UInt16 bitSize, ref IntPtr error);
 
         //ob_frame *ob_create_frameset(ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_frameset")]
+        [DllImport(obsdk, EntryPoint = "ob_create_frameset", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_frameset(ref IntPtr error);
 
         //void ob_frameset_push_frame(ob_frame *frameset, const ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frameset_push_frame")]
+        [DllImport(obsdk, EntryPoint = "ob_frameset_push_frame", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frameset_push_frame(IntPtr frameset, IntPtr frame, ref IntPtr error);
 
         //void ob_frame_set_system_timestamp_us(ob_frame *frame, uint64_t system_timestamp, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_set_system_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_set_system_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_set_system_time_stamp(IntPtr frame, UInt64 timestamp, ref IntPtr error);
 
         //void ob_frame_set_timestamp_us(ob_frame *frame, uint64_t device_timestamp * 1000, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_set_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_set_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_set_device_time_stamp(IntPtr frame, UInt64 timestamp, ref IntPtr error);
 
         //void ob_frame_set_timestamp_us(ob_frame *frame, uint64_t device_timestamp_us, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_frame_set_timestamp_us")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_set_timestamp_us", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_frame_set_timestamp_us(IntPtr frame, UInt64 timestamp, ref IntPtr error);
 
         //uint32_t ob_point_cloud_frame_get_width(const ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_point_cloud_frame_get_width")]
+        [DllImport(obsdk, EntryPoint = "ob_point_cloud_frame_get_width", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_point_cloud_frame_get_width(IntPtr frame, ref IntPtr error);
 
         //uint32_t ob_point_cloud_frame_get_height(const ob_frame *frame, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_point_cloud_frame_get_height")]
+        [DllImport(obsdk, EntryPoint = "ob_point_cloud_frame_get_height", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_point_cloud_frame_get_height(IntPtr frame, ref IntPtr error);
         #endregion
 
         #region Pipeline
         //ob_pipeline* ob_create_pipeline( ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_create_pipeline")]
+        [DllImport(obsdk, EntryPoint = "ob_create_pipeline", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_pipeline(ref IntPtr error);
 
         //ob_pipeline* ob_create_pipeline_with_device( ob_device* dev, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_create_pipeline_with_device")]
+        [DllImport(obsdk, EntryPoint = "ob_create_pipeline_with_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_pipeline_with_device(IntPtr device, ref IntPtr error);
 
         //void ob_delete_pipeline( ob_pipeline* pipeline, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_pipeline")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_pipeline", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_pipeline(IntPtr pipeline, ref IntPtr error);
 
         //void ob_pipeline_start( ob_pipeline* pipeline, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_start")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_start", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_start(IntPtr pipeline, ref IntPtr error);
 
         //void ob_pipeline_start_with_config( ob_pipeline* pipeline, ob_config* config, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_start_with_config")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_start_with_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_start_with_config(IntPtr pipeline, IntPtr config, ref IntPtr error);
 
         //void ob_pipeline_start_with_callback( ob_pipeline* pipeline, ob_config* config, ob_frame_set_callback callback, void* user_data, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_start_with_callback")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_start_with_callback", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_start_with_callback(IntPtr pipeline, IntPtr config, [MarshalAs(UnmanagedType.FunctionPtr)] NativeFramesetCallback callback, IntPtr userData, ref IntPtr error);
 
         //void ob_pipeline_stop( ob_pipeline* pipeline, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_stop")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_stop", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_stop(IntPtr pipeline, ref IntPtr error);
 
         //ob_config* ob_pipeline_get_config( ob_pipeline* pipeline, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_config")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_pipeline_get_config(IntPtr pipeline, ref IntPtr error);
 
         //ob_frame* ob_pipeline_wait_for_frameset( ob_pipeline* pipeline, uint32_t timeout_ms, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_wait_for_frameset")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_wait_for_frameset", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_pipeline_wait_for_frameset(IntPtr pipeline, UInt32 timeoutMs, ref IntPtr error);
 
         //ob_device* ob_pipeline_get_device( ob_pipeline* pipeline, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_device")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_pipeline_get_device(IntPtr pipeline, ref IntPtr error);
 
         //ob_stream_profile_list* ob_pipeline_get_stream_profile_list( ob_pipeline* pipeline, ob_sensor_type sensor_type, uint32_t* profile_count, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_stream_profile_list")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_stream_profile_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_pipeline_get_stream_profile_list(IntPtr pipeline, SensorType sensorType, ref IntPtr error);
 
         //void ob_pipeline_enable_frame_sync( ob_pipeline* pipeline, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_enable_frame_sync")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_enable_frame_sync", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_enable_frame_sync(IntPtr pipeline, ref IntPtr error);
 
         //void ob_pipeline_disable_frame_sync( ob_pipeline* pipeline, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_disable_frame_sync")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_disable_frame_sync", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_disable_frame_sync(IntPtr pipeline, ref IntPtr error);
 
         //void ob_pipeline_switch_config(ob_pipeline *pipeline, ob_config *config, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_switch_config")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_switch_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_switch_config(IntPtr pipeline, IntPtr config, ref IntPtr error);
 
         //ob_camera_param ob_pipeline_get_camera_param_with_profile(ob_pipeline *pipeline, uint32_t colorWidth, uint32_t colorHeight, uint32_t depthWidth, uint32_t depthHeight, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_camera_param_with_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_camera_param_with_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern CameraParam ob_pipeline_get_camera_param_with_profile(IntPtr pipeline, UInt32 colorWidth, UInt32 colorHeight, UInt32 depthWidth, UInt32 depthHeight, ref IntPtr error);
 
         //ob_camera_param ob_pipeline_get_camera_param(ob_pipeline *pipeline, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_camera_param")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_camera_param", CallingConvention = CallingConvention.Cdecl)]
         public static extern CameraParam ob_pipeline_get_camera_param(IntPtr pipeline, ref IntPtr error);
 
         //ob_calibration_param ob_pipeline_get_calibration_param(ob_pipeline *pipeline, ob_config *config, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_calibration_param")]
+        [DllImport(obsdk, EntryPoint = "ob_pipeline_get_calibration_param", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_pipeline_get_calibration_param(out CalibrationParam calibrationParam, IntPtr pipeline, IntPtr config, ref IntPtr error);
         
         //ob_stream_profile_list *ob_get_d2c_depth_profile_list(ob_pipeline *pipeline, ob_stream_profile *color_profile, ob_align_mode align_mode, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_get_d2c_depth_profile_list")]
+        [DllImport(obsdk, EntryPoint = "ob_get_d2c_depth_profile_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_get_d2c_depth_profile_list(IntPtr pipeline, IntPtr colorProfile, AlignMode alignMode, ref IntPtr error);
 
         //ob_config* ob_create_config( ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_create_config")]
+        [DllImport(obsdk, EntryPoint = "ob_create_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_config(ref IntPtr error);
 
         //void ob_delete_config( ob_config* config, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_config")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_config", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_config(IntPtr config, ref IntPtr error);
 
         //void ob_config_enable_stream_with_stream_profile(ob_config *config, const ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_enable_stream_with_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_config_enable_stream_with_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_enable_stream_with_stream_profile(IntPtr config, IntPtr profile, ref IntPtr error);
 
         //void ob_config_enable_stream(ob_config *config, ob_stream_type stream_type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_enable_stream")]
+        [DllImport(obsdk, EntryPoint = "ob_config_enable_stream", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_enable_stream(IntPtr config, StreamType streamType, ref IntPtr error);
 
         //void ob_config_enable_video_stream(ob_config *config, ob_stream_type type, int width, int height, int fps, ob_format format, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_enable_video_stream")]
+        [DllImport(obsdk, EntryPoint = "ob_config_enable_video_stream", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_enable_video_stream(IntPtr config, StreamType streamType, int width, int height, int fps, Format format, ref IntPtr error);
 
         //void ob_config_enable_accel_stream(ob_config *config, ob_accel_full_scale_range full_scale_range, ob_accel_sample_rate sample_rate, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_enable_accel_stream")]
+        [DllImport(obsdk, EntryPoint = "ob_config_enable_accel_stream", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_enable_accel_stream(IntPtr config, AccelFullScaleRange fullScaleRange, AccelSampleRate sampleRate, ref IntPtr error);
 
         //void ob_config_enable_gyro_stream(ob_config *config, ob_gyro_full_scale_range full_scale_range, ob_gyro_sample_rate sample_rate, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_enable_gyro_stream")]
+        [DllImport(obsdk, EntryPoint = "ob_config_enable_gyro_stream", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_enable_gyro_stream(IntPtr config, GyroFullScaleRange fullScaleRange, GyroSampleRate sampleRate, ref IntPtr error);
 
         //void ob_config_enable_all_stream( ob_config* config, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_config_enable_all_stream")]
+        [DllImport(obsdk, EntryPoint = "ob_config_enable_all_stream", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_enable_all_stream(IntPtr config, ref IntPtr error);
 
         //ob_stream_profile_list *ob_config_get_enabled_stream_profile_list(ob_config *config, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_get_enabled_stream_profile_list")]
+        [DllImport(obsdk, EntryPoint = "ob_config_get_enabled_stream_profile_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_config_get_enabled_stream_profile_list(IntPtr config, ref IntPtr error);
 
         //void ob_config_disable_stream( ob_config* config, ob_stream_type type, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_config_disable_stream")]
+        [DllImport(obsdk, EntryPoint = "ob_config_disable_stream", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_disable_stream(IntPtr config, StreamType streamType, ref IntPtr error);
 
         //void ob_config_disable_all_stream( ob_config* config, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_config_disable_all_stream")]
+        [DllImport(obsdk, EntryPoint = "ob_config_disable_all_stream", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_disable_all_stream(IntPtr config, ref IntPtr error);
 
         //void ob_config_set_align_mode(ob_config *config, ob_align_mode mode, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_set_align_mode")]
+        [DllImport(obsdk, EntryPoint = "ob_config_set_align_mode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_set_align_mode(IntPtr config, AlignMode mode, ref IntPtr error);
 
         //void ob_config_set_depth_scale_after_align_require(ob_config *config,bool enable,ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_set_depth_scale_after_align_require")]
+        [DllImport(obsdk, EntryPoint = "ob_config_set_depth_scale_after_align_require", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_set_depth_scale_after_align_require(IntPtr config, bool enable, ref IntPtr error);
 
         //void ob_config_set_d2c_target_resolution(ob_config *config,uint32_t d2c_target_width,uint32_t d2c_target_height,ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_set_d2c_target_resolution")]
+        [DllImport(obsdk, EntryPoint = "ob_config_set_d2c_target_resolution", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_set_d2c_target_resolution(IntPtr config, UInt32 width, UInt32 height, ref IntPtr error);
 
         //void ob_config_set_frame_aggregate_output_mode(ob_config *config, ob_frame_aggregate_output_mode mode, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_config_set_frame_aggregate_output_mode")]
+        [DllImport(obsdk, EntryPoint = "ob_config_set_frame_aggregate_output_mode", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_config_set_frame_aggregate_output_mode(IntPtr config, FrameAggregateOutputMode mode, ref IntPtr error);
         #endregion
 
         #region RecordPlayback
         //ob_record_device *ob_create_record_device(ob_device *device, const char *file_path, bool compression_enabled, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_record_device")]
+        [DllImport(obsdk, EntryPoint = "ob_create_record_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_record_device(IntPtr device, string filePath, bool compressionEnabled, ref IntPtr error);
 
         //void ob_delete_record_device(ob_record_device *recorder, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_delete_record_device")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_record_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_record_device(IntPtr recorder, ref IntPtr error);
 
         //void ob_record_device_pause(ob_record_device *recorder, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_record_device_pause")]
+        [DllImport(obsdk, EntryPoint = "ob_record_device_pause", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_record_device_pause(IntPtr recorder, ref IntPtr error);
 
         //void ob_record_device_resume(ob_record_device *recorder, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_record_device_resume")]
+        [DllImport(obsdk, EntryPoint = "ob_record_device_resume", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_record_device_resume(IntPtr recorder, ref IntPtr error);
 
         //ob_device *ob_create_playback_device(const char *file_path, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_playback_device")]
+        [DllImport(obsdk, EntryPoint = "ob_create_playback_device", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_playback_device(string filePath, ref IntPtr error);
 
         //void ob_playback_device_pause(ob_device *player, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_pause")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_pause", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_playback_device_pause(IntPtr player, ref IntPtr error);
 
         //void ob_playback_device_resume(ob_device *player, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_resume")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_resume", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_playback_device_resume(IntPtr player, ref IntPtr error);
 
         //void ob_playback_device_seek(ob_device *player, const uint64_t timestamp, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_seek")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_seek", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_playback_device_seek(IntPtr player, UInt64 timestamp, ref IntPtr error);
 
         //void ob_playback_device_set_playback_rate(ob_device *player, const float rate, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_set_playback_rate")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_set_playback_rate", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_playback_device_set_playback_rate(IntPtr player, float rate, ref IntPtr error);
 
         //ob_playback_status ob_playback_device_get_current_playback_status(ob_device *player, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_get_current_playback_status")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_get_current_playback_status", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_playback_device_get_current_playback_status(out PlaybackStatus status, IntPtr player, ref IntPtr error);
 
         //void ob_playback_device_set_playback_status_changed_callback(ob_device *player, ob_playback_status_changed_callback callback, void *user_data, ob_error** error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_set_playback_status_changed_callback")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_set_playback_status_changed_callback", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_playback_device_set_playback_status_changed_callback(IntPtr player, [MarshalAs(UnmanagedType.FunctionPtr)] NativePlaybackStatusChangedCallback callback, IntPtr userData, ref IntPtr error);
 
         //uint64_t ob_playback_device_get_position(ob_device *player, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_get_position")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_get_position", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_playback_device_get_position(IntPtr player, ref IntPtr error);
 
         //uint64_t ob_playback_device_get_duration(ob_device *player, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_playback_device_get_duration")]
+        [DllImport(obsdk, EntryPoint = "ob_playback_device_get_duration", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt64 ob_playback_device_get_duration(IntPtr player, ref IntPtr error);
         #endregion
 
         #region Sensor
         //ob_sensor_type ob_sensor_get_type( ob_sensor* sensor, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_sensor_get_type")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_get_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern SensorType ob_sensor_get_type(IntPtr sensor, ref IntPtr error);
 
         //ob_stream_profile_list *ob_sensor_get_stream_profile_list(ob_sensor *sensor, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_sensor_get_stream_profile_list")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_get_stream_profile_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_sensor_get_stream_profile_list(IntPtr sensor, ref IntPtr error);
 
         //ob_filter_list *ob_sensor_create_recommended_filter_list(ob_sensor *sensor, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_sensor_create_recommended_filter_list")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_create_recommended_filter_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_sensor_create_recommended_filter_list(IntPtr sensor, ref IntPtr error);
 
         //void ob_sensor_start( ob_sensor* sensor, ob_stream_profile* profile, ob_frame_callback callback, void* user_data, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_sensor_start")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_start", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_sensor_start(IntPtr sensor, IntPtr profile, [MarshalAs(UnmanagedType.FunctionPtr)] NativeFrameCallback callback, IntPtr userData, ref IntPtr error);
         
         //void ob_sensor_stop( ob_sensor* sensor, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_sensor_stop")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_stop", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_sensor_stop(IntPtr sensor, ref IntPtr error);
 
         //void ob_sensor_switch_profile(ob_sensor *sensor, ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_sensor_switch_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_switch_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_sensor_switch_profile(IntPtr sensor, IntPtr profile, ref IntPtr error);
 
         //void ob_delete_sensor_list( ob_sensor_list* sensors, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_sensor_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_sensor_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_sensor_list(IntPtr sensors, ref IntPtr error);
 
         //uint32_t ob_sensor_list_get_count( ob_sensor_list* sensors, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_sensor_list_get_count(IntPtr sensors, ref IntPtr error);
 
         //ob_sensor_type ob_sensor_list_get_sensor_type( ob_sensor_list* sensors, uint32_t index, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_sensor_type")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_sensor_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern SensorType ob_sensor_list_get_sensor_type(IntPtr sensors, UInt32 index, ref IntPtr error);
 
         //ob_sensor* ob_sensor_list_get_sensor_by_type( ob_sensor_list* sensors, ob_sensor_type sensorType, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_sensor_by_type")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_sensor_by_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_sensor_list_get_sensor_by_type(IntPtr sensors, SensorType sensorType, ref IntPtr error);
 
         //ob_sensor* ob_sensor_list_get_sensor( ob_sensor_list* sensors, uint32_t index, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_sensor")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_list_get_sensor", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_sensor_list_get_sensor(IntPtr sensors, UInt32 index, ref IntPtr error);
 
         //void ob_delete_sensor( ob_sensor* sensor, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_sensor")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_sensor", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_sensor(IntPtr sensor, ref IntPtr error);
         #endregion
 
         #region StreamProfile
         //ob_stream_profile *ob_create_stream_profile(ob_stream_type type, ob_format format, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_create_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_stream_profile(StreamType streamType, Format format, ref IntPtr error);
 
         //ob_stream_profile *ob_create_accel_stream_profile(ob_accel_full_scale_range full_scale_range, ob_accel_sample_rate sample_rate, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_accel_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_create_accel_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_accel_stream_profile(AccelFullScaleRange fullScaleRange, AccelSampleRate sampleRate, ref IntPtr error);
 
         //ob_stream_profile *ob_create_gyro_stream_profile(ob_gyro_full_scale_range full_scale_range, ob_gyro_sample_rate sample_rate, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_gyro_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_create_gyro_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_gyro_stream_profile(GyroFullScaleRange fullScaleRange, GyroSampleRate sampleRate, ref IntPtr error);
 
         //ob_stream_profile *ob_create_stream_profile_from_other_stream_profile(const ob_stream_profile *srcProfile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_stream_profile_from_other_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_create_stream_profile_from_other_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_stream_profile_from_other_stream_profile(IntPtr profile, ref IntPtr error);
 
         //ob_stream_profile *ob_create_stream_profile_with_new_format(const ob_stream_profile *profile, ob_format new_format, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_create_stream_profile_with_new_format")]
+        [DllImport(obsdk, EntryPoint = "ob_create_stream_profile_with_new_format", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_stream_profile_with_new_format(IntPtr profile, Format format, ref IntPtr error);
 
         //ob_format ob_stream_profile_get_format( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_get_format")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_get_format", CallingConvention = CallingConvention.Cdecl)]
         public static extern Format ob_stream_profile_get_format(IntPtr profile, ref IntPtr error);
 
         //void ob_stream_profile_set_format(ob_stream_profile *profile, ob_format format, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_set_format")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_set_format", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_stream_profile_set_format(IntPtr profile, Format format, ref IntPtr error);
 
         //void ob_stream_profile_set_type(const ob_stream_profile *profile, ob_stream_type type, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_set_type")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_set_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_stream_profile_set_type(IntPtr profile, StreamType streamType, ref IntPtr error);
 
         //void ob_stream_profile_set_extrinsic_to(ob_stream_profile *source, const ob_stream_profile *target, ob_extrinsic extrinsic, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_set_extrinsic_to")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_set_extrinsic_to", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_stream_profile_set_extrinsic_to(IntPtr sourceProfile, IntPtr targetProfile, Extrinsic extrinsic, ref IntPtr error);
 
         //ob_stream_type ob_stream_profile_get_type( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_get_type")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_get_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern StreamType ob_stream_profile_get_type(IntPtr profile, ref IntPtr error);
 
         //ob_extrinsic ob_stream_profile_get_extrinsic_to(ob_stream_profile *source, ob_stream_profile *target, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_get_extrinsic_to")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_get_extrinsic_to", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_stream_profile_get_extrinsic_to(out Extrinsic extrinsic, IntPtr source, IntPtr target, ref IntPtr error);
 
         //ob_stream_profile *ob_create_video_stream_profile(ob_stream_type type, ob_format format, uint32_t width, uint32_t height, uint32_t fps, ob_error** error);
-        [DllImport(obsdk, EntryPoint = "ob_create_video_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_create_video_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_create_video_stream_profile(StreamType streamType, Format format, UInt32 width, UInt32 height, UInt32 fps, ref IntPtr error);
 
         //uint32_t ob_video_stream_profile_get_fps( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_fps")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_fps", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_video_stream_profile_get_fps(IntPtr profile, ref IntPtr error);
 
         //uint32_t ob_video_stream_profile_get_width( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_width")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_width", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_video_stream_profile_get_width(IntPtr profile, ref IntPtr error);
 
         //uint32_t ob_video_stream_profile_get_height( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_height")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_height", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_video_stream_profile_get_height(IntPtr profile, ref IntPtr error);
 
         //ob_camera_intrinsic ob_video_stream_get_intrinsic(ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_get_intrinsic")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_get_intrinsic", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_stream_get_intrinsic(out CameraIntrinsic intrinsic, IntPtr profile, ref IntPtr error);
 
         //ob_camera_distortion ob_video_stream_get_distortion(ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_get_distortion")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_get_distortion", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_stream_get_distortion(out CameraDistortion distortion, IntPtr profile, ref IntPtr error);
 
         //void ob_video_stream_profile_set_width(ob_stream_profile *profile, uint32_t width, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_width")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_width", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_stream_profile_set_width(IntPtr profile, UInt32 width, ref IntPtr error);
 
         //void ob_video_stream_profile_set_height(ob_stream_profile *profile, uint32_t height, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_height")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_height", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_stream_profile_set_height(IntPtr profile, UInt32 height, ref IntPtr error);
 
         //void ob_video_stream_profile_set_intrinsic(ob_stream_profile *profile, ob_camera_intrinsic intrinsic, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_intrinsic")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_intrinsic", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_stream_profile_set_intrinsic(IntPtr profile, CameraIntrinsic intrinsic, ref IntPtr error);
 
         //ob_camera_intrinsic ob_video_stream_profile_get_intrinsic(const ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_intrinsic")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_intrinsic", CallingConvention = CallingConvention.Cdecl)]
         public static extern CameraIntrinsic ob_video_stream_profile_get_intrinsic(IntPtr profile, ref IntPtr error);
 
         //void ob_video_stream_profile_set_distortion(ob_stream_profile *profile, ob_camera_distortion distortion, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_distortion")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_distortion", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_stream_profile_set_distortion(IntPtr profile, CameraDistortion distortion, ref IntPtr error);
 
         //ob_camera_distortion ob_video_stream_profile_get_distortion(const ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_distortion")]
+        [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_distortion", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_video_stream_profile_get_distortion(out CameraDistortion distortion, IntPtr profile, ref IntPtr error);
 
         //ob_disparity_param ob_disparity_based_stream_profile_get_disparity_param(const ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_disparity_based_stream_profile_get_disparity_param")]
+        [DllImport(obsdk, EntryPoint = "ob_disparity_based_stream_profile_get_disparity_param", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_disparity_based_stream_profile_get_disparity_param(out DisparityParam param, IntPtr profile, ref IntPtr error);
 
         //void ob_disparity_based_stream_profile_set_disparity_param(ob_stream_profile *profile, ob_disparity_param param, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_disparity_based_stream_profile_set_disparity_param")]
+        [DllImport(obsdk, EntryPoint = "ob_disparity_based_stream_profile_set_disparity_param", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_disparity_based_stream_profile_set_disparity_param(IntPtr profile, DisparityParam param, ref IntPtr error);
 
         //ob_accel_full_scale_range ob_accel_stream_profile_get_full_scale_range( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_get_full_scale_range")]
+        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_get_full_scale_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern AccelFullScaleRange ob_accel_stream_profile_get_full_scale_range(IntPtr profile, ref IntPtr error);
 
         //ob_accel_sample_rate ob_accel_stream_profile_get_sample_rate( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_get_sample_rate")]
+        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_get_sample_rate", CallingConvention = CallingConvention.Cdecl)]
         public static extern AccelSampleRate ob_accel_stream_profile_get_sample_rate(IntPtr profile, ref IntPtr error);
 
         //ob_accel_intrinsic ob_accel_stream_profile_get_intrinsic(ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_get_intrinsic")]
+        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_get_intrinsic", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_accel_stream_profile_get_intrinsic(out AccelIntrinsic intrinsic, IntPtr profile, ref IntPtr error);
 
         //void ob_accel_stream_profile_set_intrinsic(ob_stream_profile *profile, ob_accel_intrinsic intrinsic, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_set_intrinsic")]
+        [DllImport(obsdk, EntryPoint = "ob_accel_stream_profile_set_intrinsic", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_accel_stream_profile_set_intrinsic(IntPtr profile, AccelIntrinsic intrinsic, ref IntPtr error);
 
         //ob_gyro_full_scale_range ob_gyro_stream_profile_get_full_scale_range( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_profile_get_full_scale_range")]
+        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_profile_get_full_scale_range", CallingConvention = CallingConvention.Cdecl)]
         public static extern GyroFullScaleRange ob_gyro_stream_profile_get_full_scale_range(IntPtr profile, ref IntPtr error);
 
         //ob_gyro_intrinsic ob_gyro_stream_get_intrinsic(ob_stream_profile *profile, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_get_intrinsic")]
+        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_get_intrinsic", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_gyro_stream_get_intrinsic(out GyroIntrinsic intrinsic, IntPtr profile, ref IntPtr error);
 
         //ob_gyro_sample_rate ob_gyro_stream_profile_get_sample_rate( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_profile_get_sample_rate")]
+        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_profile_get_sample_rate", CallingConvention = CallingConvention.Cdecl)]
         public static extern GyroSampleRate ob_gyro_stream_profile_get_sample_rate(IntPtr profile, ref IntPtr error);
 
         //void ob_gyro_stream_set_intrinsic(ob_stream_profile *profile, ob_gyro_intrinsic intrinsic, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_set_intrinsic")]
+        [DllImport(obsdk, EntryPoint = "ob_gyro_stream_set_intrinsic", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_gyro_stream_set_intrinsic(IntPtr profile, GyroIntrinsic intrinsic, ref IntPtr error);
 
         //ob_stream_profile *ob_stream_profile_list_get_video_stream_profile(ob_stream_profile_list *profile_list, int width, int height, ob_format format, int fps, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_video_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_video_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_stream_profile_list_get_video_stream_profile(IntPtr profileList, int width, int height, Format format, int fps, ref IntPtr error);
         
         //ob_stream_profile *ob_stream_profile_list_get_accel_stream_profile(ob_stream_profile_list *profile_list, ob_accel_full_scale_range fullScaleRange, ob_accel_sample_rate sampleRate, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_accel_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_accel_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_stream_profile_list_get_accel_stream_profile(IntPtr profileList, AccelFullScaleRange fullScaleRange, AccelSampleRate sampleRate, ref IntPtr error);
 
         //ob_stream_profile *ob_stream_profile_list_get_gyro_stream_profile(ob_stream_profile_list *profile_list, ob_gyro_full_scale_range fullScaleRange, ob_gyro_sample_rate sampleRate, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_gyro_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_gyro_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_stream_profile_list_get_gyro_stream_profile(IntPtr profileList, GyroFullScaleRange fullScaleRange, GyroSampleRate sampleRate, ref IntPtr error);
 
         //ob_stream_profile *ob_stream_profile_list_get_profile(ob_stream_profile_list *profile_list, int index, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_stream_profile_list_get_profile(IntPtr profileList, int index, ref IntPtr error);
 
         //uint32_t ob_stream_profile_list_get_count(ob_stream_profile_list *profile_list, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_count")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_profile_list_get_count", CallingConvention = CallingConvention.Cdecl)]
         public static extern UInt32 ob_stream_profile_list_get_count(IntPtr profileList, ref IntPtr error);
          
         //void ob_delete_stream_profile_list( ob_stream_profile** profiles, uint32_t count, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_stream_profile_list")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_stream_profile_list", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_stream_profile_list(IntPtr profiles, ref IntPtr error);
 
         //void ob_delete_stream_profile( ob_stream_profile* profile, ob_error** error );
-        [DllImport(obsdk, EntryPoint = "ob_delete_stream_profile")]
+        [DllImport(obsdk, EntryPoint = "ob_delete_stream_profile", CallingConvention = CallingConvention.Cdecl)]
         public static extern void ob_delete_stream_profile(IntPtr profile, ref IntPtr error);
         #endregion
 
         #region Utils
         //bool ob_calibration_3d_to_3d(const ob_calibration_param calibration_param, const ob_point3f source_point3f, const ob_sensor_type source_sensor_type, const ob_sensor_type target_sensor_type, ob_point3f *target_point3f, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_calibration_3d_to_3d")]
+        [DllImport(obsdk, EntryPoint = "ob_calibration_3d_to_3d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_calibration_3d_to_3d(CalibrationParam calibrationParam, Point3f sourcePoint3f, SensorType sourceSensorType, SensorType targetSensorType, out Point3f targetPoint3f, ref IntPtr error);
 
         //bool ob_calibration_2d_to_3d(const ob_calibration_param calibration_param, const ob_point2f source_point2f, const float source_depth_pixel_value, const ob_sensor_type source_sensor_type, const ob_sensor_type target_sensor_type, ob_point3f *target_point3f, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_calibration_2d_to_3d")]
+        [DllImport(obsdk, EntryPoint = "ob_calibration_2d_to_3d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_calibration_2d_to_3d(CalibrationParam calibrationParam, Point2f sourcePoint2f, float sourceDepthPixelValue, SensorType sourceSensorType, SensorType targetSensorType, out Point3f targetPoint3f, ref IntPtr error);
 
         //bool ob_calibration_3d_to_2d(const ob_calibration_param calibration_param, const ob_point3f source_point3f, const ob_sensor_type source_sensor_type, const ob_sensor_type target_sensor_type, ob_point2f *target_point2f, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_calibration_3d_to_2d")]
+        [DllImport(obsdk, EntryPoint = "ob_calibration_3d_to_2d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_calibration_3d_to_2d(CalibrationParam calibrationParam, Point3f sourcePoint3f, SensorType sourceSensorType, SensorType targetSensorType, out Point2f targetPoint2f, ref IntPtr error);
 
         //bool ob_calibration_2d_to_2d(const ob_calibration_param calibration_param, const ob_point2f source_point2f, const float source_depth_pixel_value, const ob_sensor_type source_sensor_type, const ob_sensor_type target_sensor_type, ob_point2f *target_point2f, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_calibration_2d_to_2d")]
+        [DllImport(obsdk, EntryPoint = "ob_calibration_2d_to_2d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_calibration_2d_to_2d(CalibrationParam calibrationParam, Point2f sourcePoint2f, float sourceDepthPixelValue, SensorType sourceSensorType, SensorType targetSensorType, Point2f targetPoint2f, ref IntPtr error);
 
         //ob_frame *transformation_depth_frame_to_color_camera(ob_device *device, ob_frame *depth_frame, uint32_t target_color_camera_width, uint32_t target_color_camera_height, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "transformation_depth_frame_to_color_camera")]
+        [DllImport(obsdk, EntryPoint = "transformation_depth_frame_to_color_camera", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr transformation_depth_frame_to_color_camera(IntPtr device, IntPtr depthFrame, UInt32 targetColorCameraWidth, UInt32 targetColorCameraHeight, ref IntPtr error);
 
         //bool transformation_init_xy_tables(const ob_calibration_param calibration_param, const ob_sensor_type sensor_type, float *data, uint32_t *data_size, ob_xy_tables *xy_tables, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "transformation_init_xy_tables")]
+        [DllImport(obsdk, EntryPoint = "transformation_init_xy_tables", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool transformation_init_xy_tables(CalibrationParam calibrationParam, SensorType sensorType, IntPtr data, IntPtr dataSize, IntPtr xyTables, ref IntPtr error);
 
         //void transformation_depth_to_pointcloud(ob_xy_tables *xy_tables, const void *depth_image_data, void *pointcloud_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "transformation_depth_to_pointcloud")]
+        [DllImport(obsdk, EntryPoint = "transformation_depth_to_pointcloud", CallingConvention = CallingConvention.Cdecl)]
         public static extern void transformation_depth_to_pointcloud(IntPtr xyTables, IntPtr depthImageData, IntPtr pointcloudData, ref IntPtr error);
 
         //void transformation_depth_to_rgbd_pointcloud(ob_xy_tables *xy_tables, const void *depth_image_data, const void *color_image_data, void *pointcloud_data, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "transformation_depth_to_rgbd_pointcloud")]
+        [DllImport(obsdk, EntryPoint = "transformation_depth_to_rgbd_pointcloud", CallingConvention = CallingConvention.Cdecl)]
         public static extern void transformation_depth_to_rgbd_pointcloud(IntPtr xyTables, IntPtr depthImageData, IntPtr colorImageData, IntPtr pointcloudData, ref IntPtr error);
 
         //bool ob_transformation_3d_to_3d(const OBPoint3f source_point3f, OBExtrinsic extrinsic, OBPoint3f *target_point3f, ob_error **error) ;
-        [DllImport(obsdk, EntryPoint = "ob_transformation_3d_to_3d")]
+        [DllImport(obsdk, EntryPoint = "ob_transformation_3d_to_3d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_transformation_3d_to_3d(Point3f sourcePoint3f, Extrinsic extrinsic, ref Point3f targetPoint3f, ref IntPtr error);
 
         //bool ob_transformation_2d_to_3d(const OBPoint2f source_point2f, const float source_depth_pixel_value, const OBCameraIntrinsic source_intrinsic, OBExtrinsic extrinsic, OBPoint3f *target_point3f, ob_error** error);
-        [DllImport(obsdk, EntryPoint = "ob_transformation_2d_to_3d")]
+        [DllImport(obsdk, EntryPoint = "ob_transformation_2d_to_3d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_transformation_2d_to_3d(Point2f sourcePoint2f, float sourceDepthPixelValue, CameraIntrinsic sourceIntrinsic, Extrinsic extrinsic, ref Point3f targetPoint3f, ref IntPtr error);
 
         //bool ob_transformation_3d_to_2d(const OBPoint3f source_point3f, const OBCameraIntrinsic target_intrinsic, const OBCameraDistortion target_distortion, OBExtrinsic extrinsic, OBPoint2f *target_point2f, ob_error** error);
-        [DllImport(obsdk, EntryPoint = "ob_transformation_3d_to_2d")]
+        [DllImport(obsdk, EntryPoint = "ob_transformation_3d_to_2d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_transformation_3d_to_2d(Point3f sourcePoint3f, CameraIntrinsic targetIntrinsic, CameraDistortion targetDistortion, Extrinsic extrinsic, ref Point2f targetPoint2f, ref IntPtr error);
 
         //bool ob_transformation_2d_to_2d(const OBPoint2f source_point2f, const float source_depth_pixel_value, const OBCameraIntrinsic source_intrinsic, const OBCameraDistortion source_distortion, const OBCameraIntrinsic target_intrinsic, const OBCameraDistortion target_distortion, OBExtrinsic extrinsic, OBPoint2f* target_point2f, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_transformation_2d_to_2d")]
+        [DllImport(obsdk, EntryPoint = "ob_transformation_2d_to_2d", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_transformation_2d_to_2d(Point2f sourcePoint3f, float sourceDepthPixelValue, CameraIntrinsic sourceIntrinsic, CameraDistortion sourceDistortion, CameraIntrinsic targetIntrinsic, CameraDistortion targetDistortion, Extrinsic extrinsic, ref Point2f targetPoint2f, ref IntPtr error);
 
         //bool ob_save_pointcloud_to_ply(const char *file_name, ob_frame *frame, bool save_binary, bool use_mesh, float mesh_threshold, ob_error **error);
-        [DllImport(obsdk, EntryPoint = "ob_save_pointcloud_to_ply")]
+        [DllImport(obsdk, EntryPoint = "ob_save_pointcloud_to_ply", CallingConvention = CallingConvention.Cdecl)]
         public static extern bool ob_save_pointcloud_to_ply(string fileName, IntPtr frame, bool saveBinary, bool useMesh, float meshThreshold, ref IntPtr error);
         #endregion
 
         #region Version
         //int ob_get_version();
-        [DllImport(obsdk, EntryPoint = "ob_get_version")]
+        [DllImport(obsdk, EntryPoint = "ob_get_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_get_version();
 
         //int ob_get_major_version();
-        [DllImport(obsdk, EntryPoint = "ob_get_major_version")]
+        [DllImport(obsdk, EntryPoint = "ob_get_major_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_get_major_version();
 
         //int ob_get_minor_version();
-        [DllImport(obsdk, EntryPoint = "ob_get_minor_version")]
+        [DllImport(obsdk, EntryPoint = "ob_get_minor_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_get_minor_version();
 
         //int ob_get_patch_version();
-        [DllImport(obsdk, EntryPoint = "ob_get_patch_version")]
+        [DllImport(obsdk, EntryPoint = "ob_get_patch_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern int ob_get_patch_version();
 
         //const char *ob_get_stage_version();
-        [DllImport(obsdk, EntryPoint = "ob_get_stage_version")]
+        [DllImport(obsdk, EntryPoint = "ob_get_stage_version", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_get_stage_version();
         #endregion
 
         #region TypeHelper
         //const char* ob_format_type_to_string(OBFormat type);
-        [DllImport(obsdk, EntryPoint = "ob_format_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_format_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_format_type_to_string(Format type);
 
         //const char* ob_frame_type_to_string(OBFrameType type);
-        [DllImport(obsdk, EntryPoint = "ob_frame_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_frame_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_frame_type_to_string(FrameType type);
 
         //const char* ob_stream_type_to_string(OBStreamType type);
-        [DllImport(obsdk, EntryPoint = "ob_stream_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_stream_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_stream_type_to_string(StreamType type);
 
         //const char* ob_sensor_type_to_string(OBSensorType type);
-        [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_sensor_type_to_string(SensorType type);
 
         //const char* ob_imu_rate_type_to_string(OBIMUSampleRate type);
-        [DllImport(obsdk, EntryPoint = "ob_imu_rate_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_imu_rate_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_imu_rate_type_to_string(IMUSampleRate type);
 
         //const char* ob_gyro_range_type_to_string(OBGyroFullScaleRange type);
-        [DllImport(obsdk, EntryPoint = "ob_gyro_range_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_gyro_range_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_gyro_range_type_to_string(GyroFullScaleRange type);
 
         //const char* ob_accel_range_type_to_string(OBAccelFullScaleRange type);
-        [DllImport(obsdk, EntryPoint = "ob_accel_range_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_accel_range_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_accel_range_type_to_string(AccelFullScaleRange type);
 
         //const char* ob_meta_data_type_to_string(OBFrameMetadataType type);
-        [DllImport(obsdk, EntryPoint = "ob_meta_data_type_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_meta_data_type_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_meta_data_type_to_string(FrameMetadataType type);
 
         //OBStreamType ob_sensor_type_to_stream_type(OBSensorType type);
-        [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_stream_type")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_stream_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern StreamType ob_meta_data_type_to_string(SensorType type);
 
         //OBStreamType ob_sensor_type_to_stream_type(OBSensorType type);
-        [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_stream_type")]
+        [DllImport(obsdk, EntryPoint = "ob_sensor_type_to_stream_type", CallingConvention = CallingConvention.Cdecl)]
         public static extern StreamType ob_sensor_type_to_stream_type(SensorType type);
 
         //const char* ob_format_to_string(OBFormat format);
-        [DllImport(obsdk, EntryPoint = "ob_format_to_string")]
+        [DllImport(obsdk, EntryPoint = "ob_format_to_string", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr ob_format_to_string(Format format);
         #endregion
     }

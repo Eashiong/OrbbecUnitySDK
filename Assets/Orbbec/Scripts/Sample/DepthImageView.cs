@@ -34,7 +34,11 @@ public class DepthImageView : MonoBehaviour
         {
             depthTexture.Reinitialize(obDepthFrame.width, obDepthFrame.height);
         }
-
+        int pixelCount = obDepthFrame.width * obDepthFrame.height;
+        if (obDepthFrame.data.Length < pixelCount * 2)
+        {
+            return; // 数据尚未就绪或与尺寸不匹配，跳过本帧
+        }
         int colorDataLength = (obDepthFrame.data.Length / 2) * 3;
         if (colorData == null || colorData.Length != colorDataLength)
         {

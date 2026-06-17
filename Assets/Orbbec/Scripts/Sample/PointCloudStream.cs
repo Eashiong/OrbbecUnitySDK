@@ -534,6 +534,13 @@ public class PointCloudStream : MonoBehaviour
     private float _nextIntrinsicTryTime;
     private void TryCaptureColorIntrinsic()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        // 实测：该 Android 设备的 libOrbbecSDK.so 调用 ob_video_stream_profile_get_intrinsic /
+        // ob_pipeline_get_camera_param 都会 SIGSEGV（GetWidth/GetHeight 正常，仅取内参崩）。
+        // 这是原生库缺陷，C# 无法捕获原生段错误。Android 上一律跳过，改由离线
+        // calibrateCameraCharuco 从采集到的彩色图自标定 Orbbec 内参。
+        return;
+#else
         if (_hasColorIntrinsic || !pipelineReady || pipeline == null || pipeline.Pipeline == null)
         {
             return;
@@ -614,6 +621,7 @@ public class PointCloudStream : MonoBehaviour
         {
             list?.Dispose();
         }
+#endif
     }
 
     private static ConvertFormat? GetConvertFormat(Format fmt)

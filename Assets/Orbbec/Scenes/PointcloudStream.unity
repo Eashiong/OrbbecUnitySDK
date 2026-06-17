@@ -151,9 +151,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01012373b0f61c24f96be2070eea01aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointSize: 10
+  pointSize: 4
+  useDepthColor: 1
+  depthMin: 0.2
+  depthMax: 4
+  alwaysOnTop: 1
   pointCloudMaterial: {fileID: 2100000, guid: daae9569712f41f49a6704a5c9ca3181, type: 2}
   boundsExtent: 25
+  enableDownsample: 0
+  maxRenderPoints: 100000
   pointCloudStream: {fileID: 666562853}
 --- !u!23 &553007486
 MeshRenderer:
@@ -217,7 +223,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 33.04, y: 33.04, z: 33.04}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -379,7 +385,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pipeline: {fileID: 666562845}
   maxPointCount: 100000
-  useColorPointCloud: 1
+  useColorPointCloud: 0
   useHardwareD2CAlign: 1
 --- !u!1 &1950988267
 GameObject:

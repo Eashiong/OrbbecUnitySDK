@@ -1,0 +1,4 @@
+# 阶段四离线求解依赖
+# aruco 模块只在 contrib 包里，务必用 opencv-contrib-python（不要同时装 opencv-python）
+numpy>=1.26,<2.3
+opencv-contrib-python>=4.10,<5

@@ -592,8 +592,8 @@ MonoBehaviour:
   stopButton: {fileID: 1640685650}
   uploadButton: {fileID: 2094648281}
   statusText: {fileID: 2122142606}
-  boardSquaresX: 8
-  boardSquaresY: 11
+  boardSquaresX: 11
+  boardSquaresY: 8
   boardSquareLenM: 0.015
   boardMarkerLenM: 0.011
   boardDictionary: DICT_4X4_50

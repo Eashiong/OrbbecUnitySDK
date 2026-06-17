@@ -1,0 +1,39 @@
+{
+  "T_arCam_from_orbbec": [
+    0.99995272,
+    -0.00492883,
+    0.00838216,
+    0.10602928,
+    0.00480326,
+    0.99987693,
+    0.01493506,
+    0.0287064,
+    -0.00845474,
+    -0.0148941,
+    0.99985333,
+    0.02395704,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "_layout": "row-major 4x4 (r00,r01,r02,tx, r10,r11,r12,ty, r20,r21,r22,tz, 0,0,0,1)",
+  "_coordinate_system": "Unity 左手系, +Y上 +Z前, 单位米",
+  "method": "target_board_stereo",
+  "reproj_error_px": 0.5747,
+  "rot_consistency_deg": 0.969,
+  "trans_consistency_mm": 10.9144,
+  "num_used_frames": 6,
+  "num_total_frames": 30,
+  "used_frame_indices": [
+    8,
+    12,
+    13,
+    14,
+    15,
+    27
+  ],
+  "calibrated_at": "2026-06-17",
+  "rig_version": "v1",
+  "source_file": "06_17_15_53_24.json"
+}

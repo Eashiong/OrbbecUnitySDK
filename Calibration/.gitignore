@@ -1,0 +1,5 @@
+# 采集原始数据（含 base64 图，体积大），按需本地保留，不入库
+input/*.json
+# 调试可视化图
+output/debug/
+__pycache__/

@@ -1,0 +1,314 @@
+{
+  "source_file": "06_17_15_53_24.json",
+  "created_at": "2026-06-17 15:53:24",
+  "rig_version": "v1",
+  "board": {
+    "squares_x": 11,
+    "squares_y": 8,
+    "square_len_m": 0.014999999664723873,
+    "marker_len_m": 0.010999999940395355,
+    "dictionary": "DICT_4X4_50"
+  },
+  "result": {
+    "T_arCam_from_orbbec": [
+      0.99995272,
+      -0.00492883,
+      0.00838216,
+      0.10602928,
+      0.00480326,
+      0.99987693,
+      0.01493506,
+      0.0287064,
+      -0.00845474,
+      -0.0148941,
+      0.99985333,
+      0.02395704,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "_layout": "row-major 4x4 (r00,r01,r02,tx, r10,r11,r12,ty, r20,r21,r22,tz, 0,0,0,1)",
+    "_coordinate_system": "Unity 左手系, +Y上 +Z前, 单位米",
+    "method": "target_board_stereo",
+    "reproj_error_px": 0.5747,
+    "rot_consistency_deg": 0.969,
+    "trans_consistency_mm": 10.9144,
+    "num_used_frames": 6,
+    "num_total_frames": 30,
+    "used_frame_indices": [
+      8,
+      12,
+      13,
+      14,
+      15,
+      27
+    ],
+    "calibrated_at": "2026-06-17",
+    "rig_version": "v1",
+    "source_file": "06_17_15_53_24.json"
+  },
+  "partial": false,
+  "per_frame": [
+    {
+      "index": 0,
+      "phone_corners": 3,
+      "orbbec_corners": 0,
+      "phone_reproj": null,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 1,
+      "phone_corners": 0,
+      "orbbec_corners": 0,
+      "phone_reproj": null,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 2,
+      "phone_corners": 70,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.2808,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 3,
+      "phone_corners": 14,
+      "orbbec_corners": 62,
+      "phone_reproj": 0.2555,
+      "orbbec_reproj": 0.5898,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 4,
+      "phone_corners": 15,
+      "orbbec_corners": 66,
+      "phone_reproj": 0.2868,
+      "orbbec_reproj": 0.7001,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 5,
+      "phone_corners": 0,
+      "orbbec_corners": 65,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.6876,
+      "used_handeye": true,
+      "reason": "手机角点不足(0)，仅用于手眼法"
+    },
+    {
+      "index": 6,
+      "phone_corners": 0,
+      "orbbec_corners": 66,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.5991,
+      "used_handeye": true,
+      "reason": "手机角点不足(0)，仅用于手眼法"
+    },
+    {
+      "index": 7,
+      "phone_corners": 34,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.3434,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 8,
+      "phone_corners": 41,
+      "orbbec_corners": 68,
+      "phone_reproj": 0.3669,
+      "orbbec_reproj": 0.9241,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 9,
+      "phone_corners": 2,
+      "orbbec_corners": 53,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.5677,
+      "used_handeye": true,
+      "reason": "手机角点不足(2)，仅用于手眼法"
+    },
+    {
+      "index": 10,
+      "phone_corners": 66,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.396,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 11,
+      "phone_corners": 13,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.4552,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 12,
+      "phone_corners": 70,
+      "orbbec_corners": 66,
+      "phone_reproj": 0.3162,
+      "orbbec_reproj": 0.501,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 13,
+      "phone_corners": 70,
+      "orbbec_corners": 70,
+      "phone_reproj": 0.2789,
+      "orbbec_reproj": 0.577,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 14,
+      "phone_corners": 70,
+      "orbbec_corners": 70,
+      "phone_reproj": 0.2831,
+      "orbbec_reproj": 0.383,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 15,
+      "phone_corners": 70,
+      "orbbec_corners": 70,
+      "phone_reproj": 0.3301,
+      "orbbec_reproj": 0.3668,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 16,
+      "phone_corners": 1,
+      "orbbec_corners": 68,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.4944,
+      "used_handeye": true,
+      "reason": "手机角点不足(1)，仅用于手眼法"
+    },
+    {
+      "index": 17,
+      "phone_corners": 18,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.2707,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 18,
+      "phone_corners": 18,
+      "orbbec_corners": 58,
+      "phone_reproj": 0.2814,
+      "orbbec_reproj": 0.487,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 19,
+      "phone_corners": 0,
+      "orbbec_corners": 66,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.5515,
+      "used_handeye": true,
+      "reason": "手机角点不足(0)，仅用于手眼法"
+    },
+    {
+      "index": 20,
+      "phone_corners": 0,
+      "orbbec_corners": 49,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.5332,
+      "used_handeye": true,
+      "reason": "手机角点不足(0)，仅用于手眼法"
+    },
+    {
+      "index": 21,
+      "phone_corners": 2,
+      "orbbec_corners": 66,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.6056,
+      "used_handeye": true,
+      "reason": "手机角点不足(2)，仅用于手眼法"
+    },
+    {
+      "index": 22,
+      "phone_corners": 70,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.381,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 23,
+      "phone_corners": 0,
+      "orbbec_corners": 66,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.5401,
+      "used_handeye": true,
+      "reason": "手机角点不足(0)，仅用于手眼法"
+    },
+    {
+      "index": 24,
+      "phone_corners": 2,
+      "orbbec_corners": 70,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.5929,
+      "used_handeye": true,
+      "reason": "手机角点不足(2)，仅用于手眼法"
+    },
+    {
+      "index": 25,
+      "phone_corners": 1,
+      "orbbec_corners": 70,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.501,
+      "used_handeye": true,
+      "reason": "手机角点不足(1)，仅用于手眼法"
+    },
+    {
+      "index": 26,
+      "phone_corners": 22,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.2579,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 27,
+      "phone_corners": 19,
+      "orbbec_corners": 66,
+      "phone_reproj": 0.3241,
+      "orbbec_reproj": 0.6961,
+      "used_handeye": true,
+      "used_stereo": true
+    },
+    {
+      "index": 28,
+      "phone_corners": 70,
+      "orbbec_corners": 0,
+      "phone_reproj": 0.3798,
+      "orbbec_reproj": null,
+      "reason": "Orbbec 角点不足(0)"
+    },
+    {
+      "index": 29,
+      "phone_corners": 0,
+      "orbbec_corners": 21,
+      "phone_reproj": null,
+      "orbbec_reproj": 0.5208,
+      "used_handeye": true,
+      "reason": "手机角点不足(0)，仅用于手眼法"
+    }
+  ]
+}

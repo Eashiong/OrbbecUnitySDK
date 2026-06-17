@@ -254,8 +254,7 @@ namespace Orbbec
         public CameraIntrinsic GetIntrinsic()
         {
             IntPtr error = IntPtr.Zero;
-            CameraIntrinsic intrinsic;
-            obNative.ob_video_stream_profile_get_intrinsic(out intrinsic, _handle.Ptr, ref error);
+            CameraIntrinsic intrinsic = obNative.ob_video_stream_profile_get_intrinsic(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return intrinsic;
         }

@@ -1067,11 +1067,11 @@ namespace Orbbec
 
         //ob_camera_param ob_pipeline_get_camera_param_with_profile(ob_pipeline *pipeline, uint32_t colorWidth, uint32_t colorHeight, uint32_t depthWidth, uint32_t depthHeight, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_pipeline_get_camera_param_with_profile")]
-        public static extern void ob_pipeline_get_camera_param_with_profile(out CameraParam cameraParam, IntPtr pipeline, UInt32 colorWidth, UInt32 colorHeight, UInt32 depthWidth, UInt32 depthHeight, ref IntPtr error);
+        public static extern CameraParam ob_pipeline_get_camera_param_with_profile(IntPtr pipeline, UInt32 colorWidth, UInt32 colorHeight, UInt32 depthWidth, UInt32 depthHeight, ref IntPtr error);
 
         //ob_camera_param ob_pipeline_get_camera_param(ob_pipeline *pipeline, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_pipeline_get_camera_param")]
-        public static extern void ob_pipeline_get_camera_param(out CameraParam cameraParam, IntPtr pipeline, ref IntPtr error);
+        public static extern CameraParam ob_pipeline_get_camera_param(IntPtr pipeline, ref IntPtr error);
 
         //ob_calibration_param ob_pipeline_get_calibration_param(ob_pipeline *pipeline, ob_config *config, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_pipeline_get_calibration_param")]
@@ -1329,7 +1329,7 @@ namespace Orbbec
 
         //ob_camera_intrinsic ob_video_stream_profile_get_intrinsic(const ob_stream_profile *profile, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_get_intrinsic")]
-        public static extern void ob_video_stream_profile_get_intrinsic(out CameraIntrinsic intrinsic, IntPtr profile, ref IntPtr error);
+        public static extern CameraIntrinsic ob_video_stream_profile_get_intrinsic(IntPtr profile, ref IntPtr error);
 
         //void ob_video_stream_profile_set_distortion(ob_stream_profile *profile, ob_camera_distortion distortion, ob_error **error);
         [DllImport(obsdk, EntryPoint = "ob_video_stream_profile_set_distortion")]

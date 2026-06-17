@@ -252,8 +252,7 @@ namespace Orbbec
         public CameraParam GetCameraParam()
         {
             IntPtr error = IntPtr.Zero;
-            CameraParam cameraParam;
-            obNative.ob_pipeline_get_camera_param(out cameraParam, _handle.Ptr, ref error);
+            CameraParam cameraParam = obNative.ob_pipeline_get_camera_param(_handle.Ptr, ref error);
             NativeException.HandleError(error);
             return cameraParam;
         }
@@ -261,8 +260,8 @@ namespace Orbbec
         public CameraParam GetCameraParamWithProfile(UInt32 colorWidth, UInt32 colorHeight, UInt32 depthWidth, UInt32 depthHeight)
         {
             IntPtr error = IntPtr.Zero;
-            CameraParam cameraParam;
-            obNative.ob_pipeline_get_camera_param_with_profile(out cameraParam, _handle.Ptr, colorWidth, colorHeight, depthWidth, depthHeight, ref error);
+            CameraParam cameraParam =
+                obNative.ob_pipeline_get_camera_param_with_profile(_handle.Ptr, colorWidth, colorHeight, depthWidth, depthHeight, ref error);
             NativeException.HandleError(error);
             return cameraParam;
         }
